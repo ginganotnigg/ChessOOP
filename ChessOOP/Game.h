@@ -13,8 +13,8 @@ using namespace std;
 class Game {
 private:
 	// Window
-	float width = 1080;
-	float height = 720;
+	int width = 1080;
+	int height = 720;
 	sf::RenderWindow* window;
 	sf::Event ev;
 
@@ -26,6 +26,10 @@ private:
 	Menu menu;
 
 	// Board & Pieces
+
+	// Sounds
+	sf::SoundBuffer soundBf[7];
+	sf::Sound sound[7];
 
 	// Texts
 	sf::Font ingameFont;
@@ -43,6 +47,7 @@ private:
 	// Private funcs
 	void initVariables();
 	void initWindow();
+	void initSound();
 	void initFont();
 	void initText();
 	void initBgr();
