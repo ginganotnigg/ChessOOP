@@ -6,7 +6,7 @@
 #include <sstream>
 #include <vector>
 #include <ctime>
-#include "Menu.h"
+#include "GUIText.h"
 
 using namespace std;
 
@@ -22,9 +22,6 @@ private:
 	sf::Vector2i mousePos;
 	sf::Vector2f mousePosView;
 
-	// Menu
-	Menu menu;
-
 	// Board & Pieces
 
 	// Sounds
@@ -32,17 +29,21 @@ private:
 	sf::Sound sound[7];
 
 	// Texts
-	sf::Font ingameFont;
-	sf::Text ingameText[3];
-	sf::Text endgameText[2];
+	sf::Font font;
+	GUIText menuText[5];
+	GUIText ingameText[5];
+	GUIText endgameText[5];
 
 	// Variables
+	int draw_idx;
+	bool soundLoop;
 
 	// Background
 	sf::Texture boardTxt;
 	sf::Sprite board;
 	sf::Texture bgrTxt;
 	sf::Sprite bgr;
+	sf::RectangleShape whiteRect;
 
 	// Private funcs
 	void initVariables();
@@ -77,7 +78,7 @@ public:
 	void renderBoard();
 	void renderBgr();
 	void renderMenu();
-	void renderText();
+	void renderIngame();
 	void renderEndgame();
 	void renderPieces();
 	void render();

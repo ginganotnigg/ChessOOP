@@ -2,14 +2,16 @@
 
 GUIText::GUIText() {
 	type = 1;
+	defColor = sf::Color::White;
 }
 
 GUIText::~GUIText() {
 }
 
-void GUIText::initText(sf::Font& font, const int& size, const string& name, const sf::Vector2f& pos, const int& num) {
+void GUIText::initText(sf::Font& font, const int& size, const string& name, const sf::Vector2f& pos, const int& num, sf::Color color) {
 	text.setFont(font);
-	text.setFillColor(sf::Color::White);
+	defColor = color;
+	text.setFillColor(defColor);
 	text.setCharacterSize(size);
 	text.setString(name);
 	text.setPosition(pos);
@@ -27,7 +29,7 @@ void GUIText::update(sf::Event& e, sf::Vector2f& mouse) {
 			text.setFillColor(sf::Color(191, 69, 63));
 		}
 		else {
-			text.setFillColor(sf::Color::White);
+			text.setFillColor(defColor);
 		}
 		break;
 	}
@@ -37,7 +39,7 @@ void GUIText::update(sf::Event& e, sf::Vector2f& mouse) {
 			text.setFillColor(sf::Color::Red);
 		}
 		else {
-			text.setFillColor(sf::Color::White);
+			text.setFillColor(defColor);
 		}
 		break;
 	}
@@ -47,7 +49,7 @@ void GUIText::update(sf::Event& e, sf::Vector2f& mouse) {
 			text.setFillColor(sf::Color(191, 69, 63));
 		}
 		else {
-			text.setFillColor(sf::Color::White);
+			text.setFillColor(defColor);
 		}
 		break;
 	}

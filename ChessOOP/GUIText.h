@@ -18,11 +18,12 @@ enum GUI {
 class GUIText {
 public:
 	sf::Text text;
+	sf::Color defColor;
 	int type;
 
 	GUIText();
 	~GUIText();
-	void initText(sf::Font& font, const int& size, const string& name, const sf::Vector2f& pos, const int& num);
+	void initText(sf::Font& font, const int& size, const string& name, const sf::Vector2f& pos, const int& num, sf::Color color = sf::Color::White);
 	void update(sf::Event& e, sf::Vector2f& mouse);
 	void render(sf::RenderWindow*& window);
 };
