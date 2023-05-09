@@ -10,19 +10,19 @@ void Piece::setCurrentPosition(const Square& position) {
 	this->position = position;
 }
 void Piece::setStatus(const char& status) {
-
+	this->status = status;
 }
 
 
 Square Piece::getCurrentPosition() {
-
+	return position;
 }
 char Piece::getStatus() {
-
+	return status;
 }
 string Piece::getColor() {
-
+	return color;
 }
-string Piece::getName() {
-
+char Piece::getName() {
+	return name;
 }
