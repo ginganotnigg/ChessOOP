@@ -4,9 +4,9 @@ Square::Square()
 {
 }
 
-Square::Square(char _collumn, int _row, sf::Vector2f _center)
+Square::Square(char _column, int _row, sf::Vector2f _center)
 {
-    this->collumn=_collumn;
+    this->column=_column;
     this->row=_row;
     this->center=_center;
 }
