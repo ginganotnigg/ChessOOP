@@ -8,23 +8,30 @@ using namespace std;
 
 class Piece {
 protected:
-	char   name;
-	string color;
-	Square position;
-	char   status;
+	char    name;
+	Square* position;
+	string  status;
+	sf::Texture img;
+
 public:
+	Piece();
+	Piece(const char& name, Square* position, const char& status);
+
+	~Piece();
+
 	void setName(const char& name);
-	void setColor(const string& color);
-	void setCurrentPosition(const Square& position);
+	void setCurrentPosition(Square* position);
 	void setStatus(const char& status);
 
-	Square getCurrentPosition();
-	char   getStatus();
-	string getColor();
+	Square* getCurrentPosition();
+	string  getStatus();
 	char   getName();
 	virtual vector<Square> getValidMoves() = 0;
 	virtual bool isValidMove() = 0;
-	virtual void move(const Square& pos) = 0;
+	void move(Square* pos);
+
+	sf::Sprite sprite;
+	sf::Vector2u imageSize;
 };
 
 
