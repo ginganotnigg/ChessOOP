@@ -1,11 +1,11 @@
 #pragma once
 #include "Piece.h"
-class Queen: public Piece
+
+class Queen : public Piece
 {
 public:
-	Queen();
+	Queen(char name);
 	~Queen();
-	vector<Square> getValidMoves();
-	bool isValidMove() = 0;
-	void move(const Square& pos);
+	vector<Square*> getValidMoves();
+	bool isValidMove();
 };

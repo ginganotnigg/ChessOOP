@@ -1,4 +1,4 @@
-#include"Piece.h"
+#include "Piece.h"
 
 Piece::Piece() {
 	name = ' ';
@@ -6,10 +6,8 @@ Piece::Piece() {
 	status = "unmove";
 }
 
-Piece::Piece(const char& name, Square* position, const char& status) {
+Piece::Piece(const char& name) {
 	this->name = name;
-	this->position = position;
-	this->status = status;
 }
 
 
@@ -35,6 +33,7 @@ void Piece::setStatus(const char& status) {
 Square* Piece::getCurrentPosition() {
 	return position;
 }
+
 string Piece::getStatus() {
 	return status;
 }

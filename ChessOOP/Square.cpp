@@ -2,41 +2,44 @@
 #include "Piece.h"
 #include <iostream>
 using namespace std;
+
 Square::Square()
 {
+    piece = nullptr;
 }
 
-Square::Square(char _collumn, int _row, sf::Vector2f _center)
+Square::Square(char col, int row)
 {
-    this->collumn = _collumn;
-    this->row = _row;
-    this->center = _center;
+    this->column = col;
+    this->row = row;
 }
+
 Square::~Square()
 {
+    delete piece;
 }
-Point Square::getCenter(char col, int row)
+
+sf::Vector2f Square::getCenter(char col, int row)
 {
-    Point center;
-    center.x = 0;
-    center.y = 0;
-    for (char i = 'A'; i <= 'H'; i++)
+    int xPos = 0, yPos = 0;
+    for (char i = 'a'; i <= col; i++)
     {
-        center.x += 80;
-        if (i == col)
-        {
-            break;
-        }
+        xPos += 80;
     }
-    for (int i = 8; i > 0; i--)
+    for (int i = 8; i >= row; i--)
     {
-        center.y += 80;
-        if (i == row)
-        {
-            break;
-        }
+        yPos += 80;
     }
-    center.x -= 30;
-    center.y -= 30;
-    return center;
+    xPos -= 30;
+    yPos -= 30;
+    return sf::Vector2f(xPos, yPos);
+}
+
+void Square::render(sf::RenderWindow*& window) {
+    if (piece == nullptr) {
+        return;
+    }
+    piece->sprite.setPosition(getCenter(column, row));
+    piece->sprite.setScale(0.75, 0.75);
+    window->draw(piece->sprite);
 }

@@ -7,6 +7,7 @@
 #include <vector>
 #include <ctime>
 #include "GUIText.h"
+#include "Board.h"
 
 using namespace std;
 
@@ -17,6 +18,7 @@ private:
 	int height = 720;
 	sf::RenderWindow* window;
 	sf::Event ev;
+	sf::ContextSettings settings;
 
 	// Mouse positions
 	sf::Vector2i mousePos;
@@ -32,17 +34,22 @@ private:
 	sf::Font font;
 	GUIText menuText[5];
 	GUIText ingameText[5];
+	GUIText replayText[4];
 	GUIText endgameText[5];
 
 	// Variables
 	int draw_idx;
 	bool soundLoop;
+	bool replayPaused;
+	bool renderProm;
+	Board board;
 
 	// Background
-	sf::Texture boardTxt;
-	sf::Sprite board;
 	sf::Texture bgrTxt;
 	sf::Sprite bgr;
+	sf::RectangleShape promBox;
+	sf::Texture promTxt[4];
+	sf::Sprite prom[4];
 	sf::RectangleShape whiteRect;
 
 	// Private funcs
@@ -53,6 +60,7 @@ private:
 	void initText();
 	void initBgr();
 	void initBoard();
+	void initPromote();
 
 public:
 	// Cons & Dest
@@ -63,23 +71,24 @@ public:
 	bool running();
 	bool getFinish();
 
-	// Functions
+	// Updating functions
 	void pollEvents();
 	void updateText();
 	void updateMousePos();
-
 	void clickPieces();
 	void capturePieces();
 	void movePieces();
 	void checkmatePieces();
-
 	void update();
 
+	// Rendering functions
 	void renderBoard();
 	void renderBgr();
 	void renderMenu();
 	void renderIngame();
+	void renderReplay();
 	void renderEndgame();
+	void renderPromote();
 	void renderPieces();
 	void render();
 };

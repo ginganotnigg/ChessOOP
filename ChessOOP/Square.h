@@ -1,22 +1,21 @@
 #pragma once
+#pragma once
 #include <SFML/Graphics.hpp>
 #include <iostream>
 using namespace std;
-struct Point
-{
-	int x;
-	int y;
-};
+
+class Piece;
 
 class Square
 {
 public:
-	Square();
-	Square(char _collumn, int _row, sf::Vector2f _center);
-	~Square();
-	Point getCenter(char col, int row);
-	sf::Vector2f center;
-	char collumn;
+	char column;
 	int row;
 	Piece* piece;
+	
+	Square();
+	Square(char col, int row);
+	~Square();
+	sf::Vector2f getCenter(char col, int row);
+	void render(sf::RenderWindow*& window);
 };

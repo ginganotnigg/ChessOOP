@@ -4,12 +4,15 @@
 void Game::initVariables() {
     draw_idx = 1;
     soundLoop = true;
+    replayPaused = false;
+    renderProm = true;
 }
 
 void Game::initWindow() {
     window = new sf::RenderWindow(sf::VideoMode(width, height), "Chess", sf::Style::Close | sf::Style::Resize);
     window->setFramerateLimit(60);
     window->setVerticalSyncEnabled(false);
+    settings.antialiasingLevel = 8;
 }
 
 void Game::initSound() {
@@ -42,6 +45,10 @@ void Game::initText() {
     ingameText[1].initText(font, 35, "Redo", sf::Vector2f(900, 220), 2);
     ingameText[2].initText(font, 35, "Flip Board", sf::Vector2f(800, 300), 2);
     ingameText[3].initText(font, 40, "Resign", sf::Vector2f(820, 420), 2);
+    replayText[0].initText(font, 35, "<<", sf::Vector2f(780, 270), 2);
+    replayText[1].initText(font, 35, "[]", sf::Vector2f(845, 270), 2);
+    replayText[2].initText(font, 35, ">>", sf::Vector2f(900, 270), 2);
+    replayText[3].initText(font, 40, "Return", sf::Vector2f(800, 390), 2);
     endgameText[0].initText(font, 35, "Rematch", sf::Vector2f(390, 420), 2, sf::Color(209, 139, 71));
     endgameText[1].initText(font, 35, "Replay", sf::Vector2f(600, 420), 2, sf::Color(209, 139, 71));
     endgameText[2].initText(font, 35, "Return", sf::Vector2f(500, 480), 2, sf::Color(209, 139, 71));
@@ -60,12 +67,28 @@ void Game::initBgr() {
 }
 
 void Game::initBoard() {
-    boardTxt.loadFromFile("Image/CBoard.png");
-    board.setTexture(boardTxt);
-    board.setPosition(40, 40);
+    board.initBoard();
 }
 
-
+void Game::initPromote() {
+    promBox.setSize(sf::Vector2f(280, 70));
+    promBox.setPosition(730, 100);
+    promBox.setFillColor(sf::Color(255, 215, 158));
+    promBox.setOutlineColor(sf::Color(191, 69, 63));
+    promBox.setOutlineThickness(4);
+    promTxt[0].loadFromFile("Image/wQ.png");
+    prom[0].setTexture(promTxt[0]);
+    promTxt[1].loadFromFile("Image/wR.png");
+    prom[1].setTexture(promTxt[1]);
+    promTxt[2].loadFromFile("Image/wN.png");
+    prom[2].setTexture(promTxt[2]);
+    promTxt[3].loadFromFile("Image/wB.png");
+    prom[3].setTexture(promTxt[3]);
+    for (int i = 0; i < 4; i++) {
+        prom[i].scale(0.75, 0.75);
+        prom[i].setPosition(735 + 70.0 * i, 105);
+    }
+}
 
 Game::Game() {
     initBgr();
@@ -75,6 +98,7 @@ Game::Game() {
     initSound();
     initFont();
     initText();
+    initPromote();
 }
 
 Game::~Game() {
@@ -127,9 +151,45 @@ void Game::pollEvents() {
                 // Ingame button
                 if (ingameText[3].text.getGlobalBounds().contains(mousePosView)) {
                     sound[1].play();
-                    draw_idx = 3;
+                    draw_idx = 4;
+                }
+                if (prom[0].getGlobalBounds().contains(mousePosView)) {
+                    renderProm = false;
+                }
+                if (prom[1].getGlobalBounds().contains(mousePosView)) {
+                    renderProm = false;
+                }
+                if (prom[2].getGlobalBounds().contains(mousePosView)) {
+                    renderProm = false;
+                }
+                if (prom[3].getGlobalBounds().contains(mousePosView)) {
+                    renderProm = false;
+                }
+                // Replay button
+                if (replayText[1].text.getGlobalBounds().contains(mousePosView)) {
+                    sound[1].play();
+                    replayPaused = !replayPaused;
+                    if (replayPaused) {
+                        replayText[1].text.setString("#");
+                    }
+                    else {
+                        replayText[1].text.setString("[]");
+                    }
+                }
+                if (replayText[3].text.getGlobalBounds().contains(mousePosView)) {
+                    sound[1].play();
+                    draw_idx = 1;
+                    soundLoop = true;
                 }
                 // Endgame button
+                if (endgameText[0].text.getGlobalBounds().contains(mousePosView)) {
+                    sound[1].play();
+                    draw_idx = 2;
+                }
+                if (endgameText[1].text.getGlobalBounds().contains(mousePosView)) {
+                    sound[1].play();
+                    draw_idx = 3;
+                }
                 if (endgameText[2].text.getGlobalBounds().contains(mousePosView)) {
                     sound[1].play();
                     draw_idx = 1;
@@ -149,6 +209,9 @@ void Game::updateText() {
     }
     for (int i = 0; i < 5; i++) {
         ingameText[i].update(ev, mousePosView);
+    }
+    for (int i = 0; i < 4; i++) {
+        replayText[i].update(ev, mousePosView);
     }
     for (int i = 0; i < 5; i++) {
         endgameText[i].update(ev, mousePosView);
@@ -194,7 +257,17 @@ void Game::renderBgr() {
 }
 
 void Game::renderBoard() {
-    window->draw(board);
+    board.render(window);
+}
+
+void Game::renderPromote() {
+    if (!renderProm) {
+        return;
+    }
+    window->draw(promBox);
+    for (int i = 0; i < 4; i++) {
+        window->draw(prom[i]);
+    }
 }
 
 void Game::renderMenu() {
@@ -206,6 +279,12 @@ void Game::renderMenu() {
 void Game::renderIngame() {
     for (int i = 0; i < 5; i++) {
         ingameText[i].render(window);
+    }
+}
+
+void Game::renderReplay() {
+    for (int i = 0; i < 4; i++) {
+        replayText[i].render(window);
     }
 }
 
@@ -233,10 +312,18 @@ void Game::render() {
         renderBoard();
         renderPieces();
         renderIngame();
+        renderPromote();
         break;
     }
 
     case 3: {
+        renderBoard();
+        renderPieces();
+        renderReplay();
+        break;
+    }
+
+    case 4: {
         renderBoard();
         renderPieces();
         renderEndgame();
