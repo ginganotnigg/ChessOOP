@@ -85,8 +85,7 @@ void Game::initPromote() {
     promTxt[3].loadFromFile("Image/wB.png");
     prom[3].setTexture(promTxt[3]);
     for (int i = 0; i < 4; i++) {
-        prom[i].scale(0.75, 0.75);
-        prom[i].setPosition(735 + 70.0 * i, 105);
+        prom[i].setPosition(730 + 70.0 * i, 100);
     }
 }
 
