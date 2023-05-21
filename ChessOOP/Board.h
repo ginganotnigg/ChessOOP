@@ -2,6 +2,10 @@
 #include "Square.h"
 #include "Piece.h"
 #include "Queen.h"
+#include "Rook.h"
+#include "King.h"
+#include "Knight.h"
+#include "Bishop.h"
 #include <vector>
 #include <string>
 
