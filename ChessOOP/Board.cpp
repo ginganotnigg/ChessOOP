@@ -13,6 +13,24 @@ void Board::initBoard() {
 	//string row1 = "RNBQKBNR";
 	squares[getSqrIdx('d', 1)]->piece = new Queen('Q');
 	squares[getSqrIdx('d', 8)]->piece = new Queen('q');
+
+	squares[getSqrIdx('a', 1)]->piece = new Rook('R');
+	squares[getSqrIdx('a', 8)]->piece = new Rook('r');
+	squares[getSqrIdx('h', 1)]->piece = new Rook('R');
+	squares[getSqrIdx('h', 8)]->piece = new Rook('r');
+
+	squares[getSqrIdx('e', 1)]->piece = new King('K');
+	squares[getSqrIdx('e', 8)]->piece = new King('k');
+
+	squares[getSqrIdx('b', 1)]->piece = new Knight('N');
+	squares[getSqrIdx('g', 1)]->piece = new Knight('N');
+	squares[getSqrIdx('b', 8)]->piece = new Knight('n');
+	squares[getSqrIdx('g', 8)]->piece = new Knight('n');
+
+	squares[getSqrIdx('c', 1)]->piece = new Bishop('B');
+	squares[getSqrIdx('f', 1)]->piece = new Bishop('B');
+	squares[getSqrIdx('c', 8)]->piece = new Bishop('b');
+	squares[getSqrIdx('f', 8)]->piece = new Bishop('b');
 }
 
 Board::Board() {
