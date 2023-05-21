@@ -1,5 +1,4 @@
 #pragma once
-#pragma once
 #include <SFML/Graphics.hpp>
 #include <iostream>
 using namespace std;
@@ -12,7 +11,8 @@ public:
 	char column;
 	int row;
 	Piece* piece;
-	
+	sf::Vector2f pieceSize = sf::Vector2f(70, 70);
+
 	Square();
 	Square(char col, int row);
 	~Square();
