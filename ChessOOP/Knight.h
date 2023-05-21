@@ -3,9 +3,9 @@
 class Knight : public Piece
 {
 public:
-	Knight();
+	Knight(char name);
 	~Knight();
-	vector<Square> getValidMoves();
-	bool isValidMove() = 0;
-	void move(const Square& pos);
+	vector<Square*> getValidMoves();
+	bool isValidMove();
+	
 };
