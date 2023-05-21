@@ -30,8 +30,8 @@ sf::Vector2f Square::getCenter(char col, int row)
     {
         yPos += 80;
     }
-    xPos -= 30;
-    yPos -= 30;
+    xPos -= pieceSize.x / 2;
+    yPos -= pieceSize.x / 2;
     return sf::Vector2f(xPos, yPos);
 }
 
@@ -40,6 +40,5 @@ void Square::render(sf::RenderWindow*& window) {
         return;
     }
     piece->sprite.setPosition(getCenter(column, row));
-    piece->sprite.setScale(0.75, 0.75);
     window->draw(piece->sprite);
 }
