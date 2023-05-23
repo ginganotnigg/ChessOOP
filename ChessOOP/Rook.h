@@ -8,5 +8,5 @@ public:
 
 
 	bool isValidMove();
-	vector<Square*> getValidMoves();
+	vector<Square*> getValidMoves(Board& board);
 };
