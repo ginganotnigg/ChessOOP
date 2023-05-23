@@ -42,6 +42,15 @@ char Piece::getName() {
 	return name;
 }
 
+bool Piece::checkAlly(Square* s) {
+	if (name >= 'A' && name < 'Z' && s->piece->name >= 'A' && s->piece->name <= 'Z') {
+		return true;
+	}
+	if (name >= 'a' && name <= 'z' && s->piece->name >= 'a' && s->piece->name <= 'z') {
+		return true;
+	}
+	return false;
+}
 void Piece::move(Square* des) {
 	position = des;
 }
