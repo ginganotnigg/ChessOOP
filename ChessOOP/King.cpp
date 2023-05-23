@@ -21,15 +21,18 @@ bool King::isValidMove() {
 
 }
 
-vector<Square*> King::getValidMoves() {
+vector<Square*> King::getValidMoves(Board& board) {
 	vector<Square*> squares;
 	char col = position->column;
 	int row = position->row;
+
 	for (char i = max((int)col - 1, (int)'a'); i <= min((int)col + 1, (int)'h'); i++) {
 		for (int j = max(row - 1, 1); j <= min(row + 1, 8); j++) {
 			if (i == col && j == row)
 				continue;
-			squares.push_back(new Square(i, j));
+			if (checkAlly(board.squares[board.getSqrIdx(i, j)]))
+				continue;
+			squares.push_back(board.squares[board.getSqrIdx(i, j)]);
 		}
 	}
 	
