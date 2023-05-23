@@ -4,6 +4,7 @@
 #include <vector>
 #include <SFML/Graphics.hpp>
 #include "Square.h"
+#include "Board.h"
 
 using namespace std;
 
@@ -26,7 +27,7 @@ public:
 	Square* getCurrentPosition();
 	string getStatus();
 	char getName();
-	virtual vector<Square*> getValidMoves() = 0;
+	virtual vector<Square*> getValidMoves(Board &board) = 0;
 	virtual bool isValidMove() = 0;
 	void move(Square* pos);
 	bool checkAlly(Square *s);
