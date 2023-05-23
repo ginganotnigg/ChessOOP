@@ -1,14 +1,12 @@
 #pragma once
 #include"Piece.h"
-#include"Board.h"
 
 class King : public Piece {
 public:
 
 	King(char name);
 
-	bool isValidMove();
-	vector<Square*> getValidMoves(Board& board);
+	vector<Square*> getValidMoves(vector<Square*> boardSquares);
 
 	bool checkCastle(vector<Square*> middles, Square* rook);
 	void castle(Square* rook);
