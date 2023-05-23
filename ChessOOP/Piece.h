@@ -1,10 +1,8 @@
 #pragma once
-#pragma once
 #include <iostream>
 #include <vector>
 #include <SFML/Graphics.hpp>
 #include "Square.h"
-#include "Board.h"
 
 using namespace std;
 
@@ -22,15 +20,15 @@ public:
 
 	void setName(const char& name);
 	void setCurrentPosition(Square* position);
-	void setStatus(const char& status);
+	void setStatus(const string& status);
 
 	Square* getCurrentPosition();
 	string getStatus();
 	char getName();
-	virtual vector<Square*> getValidMoves(Board &board) = 0;
-	virtual bool isValidMove() = 0;
-	void move(Square* pos);
-	bool checkAlly(Square *s);
+	virtual vector<Square*> getValidMoves(vector<Square*> boardSquares) = 0;
+	bool checkAlly(Square* s);
+
+	int getSqrIdx(char col, int row);
 
 	sf::Sprite sprite;
 	sf::Vector2f imageSize;
