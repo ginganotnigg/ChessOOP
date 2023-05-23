@@ -29,6 +29,7 @@ public:
 	virtual vector<Square*> getValidMoves() = 0;
 	virtual bool isValidMove() = 0;
 	void move(Square* pos);
+	bool checkAlly(Square *s);
 
 	sf::Sprite sprite;
 	sf::Vector2f imageSize;
