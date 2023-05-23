@@ -11,17 +11,8 @@ King::King(const char name) : Piece(name) {
 
 }
 
-bool King::isValidMove() {
-	for (char i = max((int)position->column - 1, (int)'a'); i <= min((int)position->column + 1, (int)'h'); i++) {
-		for (int j = max(position->row - 1, 1); j <= min(position->row + 1, 8); j++) {
-			
-		}
-	}
-	return false;
 
-}
-
-vector<Square*> King::getValidMoves(Board& board) {
+vector<Square*> King::getValidMoves(vector<Square*> boardSquares) {
 	vector<Square*> squares;
 	char col = position->column;
 	int row = position->row;
@@ -30,9 +21,9 @@ vector<Square*> King::getValidMoves(Board& board) {
 		for (int j = max(row - 1, 1); j <= min(row + 1, 8); j++) {
 			if (i == col && j == row)
 				continue;
-			if (checkAlly(board.squares[board.getSqrIdx(i, j)]))
+			if (checkAlly(boardSquares[getSqrIdx(i, j)]))
 				continue;
-			squares.push_back(board.squares[board.getSqrIdx(i, j)]);
+			squares.push_back(boardSquares[getSqrIdx(i, j)]);
 		}
 	}
 	
@@ -61,5 +52,3 @@ void King::castle(Square* rook) {
 		rook->column = 'f';
 	}
 }
-
-
