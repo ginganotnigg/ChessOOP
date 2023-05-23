@@ -8,7 +8,7 @@ public:
 	King(char name);
 
 	bool isValidMove();
-	vector<Square*> getValidMoves();
+	vector<Square*> getValidMoves(Board& board);
 
 	bool checkCastle(vector<Square*> middles, Square* rook);
 	void castle(Square* rook);
