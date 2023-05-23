@@ -16,18 +16,51 @@ bool Rook::isValidMove() {
 
 }
 
-vector<Square*> Rook::getValidMoves() {
+vector<Square*> Rook::getValidMoves(Board& board) {
 	vector<Square*> squares;
+	int row = position->row;
+	char col = position->column;
 	// Rook moves
-	for (int i = 1; i <= 8; i++)
-	{
-		if (i != position->row) squares.push_back(new Square(position->column, i));
+	// duyet tren
+	for (int i = row + 1; i <= 8; i++) {
+		if (checkAlly(board.squares[board.getSqrIdx(col, i)])) {
+			break;
+		}
+		squares.push_back(board.squares[board.getSqrIdx(col, i)]);
+		if (!checkAlly(board.squares[board.getSqrIdx(col, i)])) {
+			break;
+		}
 	}
-	for (int j = 'a'; j <= 'h'; j++)
-	{
-		if (j != position->column) squares.push_back(new Square(char(j), position->row));
+	//duyet duoi
+	for (int i = position->row - 1; i >= 0; i--) {
+		if (checkAlly(board.squares[board.getSqrIdx(col, i)])) {
+			break;
+		}
+		squares.push_back(board.squares[board.getSqrIdx(col, i)]);
+		if (!checkAlly(board.squares[board.getSqrIdx(col, i)])) {
+			break;
+		}
 	}
-	
+	//duyet phai
+	for (char j= position->column + 1; j <= 'h';j++) {
+		if (checkAlly(board.squares[board.getSqrIdx(j, row)])) {
+			break;
+		}
+		squares.push_back(board.squares[board.getSqrIdx(j, row)]);
+		if (!checkAlly(board.squares[board.getSqrIdx(j, row)])) {
+			break;
+		}
+	}
+	//duyet trai
+	for (char j = position->column - 1; j >= 'a'; j--) {
+		if (checkAlly(board.squares[board.getSqrIdx(j, row)])) {
+			break;
+		}
+		squares.push_back(board.squares[board.getSqrIdx(j, row)]);
+		if (!checkAlly(board.squares[board.getSqrIdx(j, row)])) {
+			break;
+		}
+	}
 	return squares;
 }
 
