@@ -6,7 +6,5 @@ public:
 
 	Rook(char name);
 
-
-	bool isValidMove();
-	vector<Square*> getValidMoves(Board& board);
+	vector<Square*> getValidMoves(vector<Square*> boardSquares);
 };
