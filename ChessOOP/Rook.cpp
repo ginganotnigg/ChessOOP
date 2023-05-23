@@ -10,54 +10,49 @@ Rook::Rook(const char name): Piece(name) {
 
 }
 
-bool Rook::isValidMove() {
-	
-		return false;
 
-}
-
-vector<Square*> Rook::getValidMoves(Board& board) {
+vector<Square*> Rook::getValidMoves(vector<Square*> boardSquares) {
 	vector<Square*> squares;
 	int row = position->row;
 	char col = position->column;
 	// Rook moves
 	// duyet tren
 	for (int i = row + 1; i <= 8; i++) {
-		if (checkAlly(board.squares[board.getSqrIdx(col, i)])) {
+		if (checkAlly(boardSquares[getSqrIdx(col, i)])) {
 			break;
 		}
-		squares.push_back(board.squares[board.getSqrIdx(col, i)]);
-		if (!checkAlly(board.squares[board.getSqrIdx(col, i)])) {
+		squares.push_back(boardSquares[getSqrIdx(col, i)]);
+		if (!checkAlly(boardSquares[getSqrIdx(col, i)])) {
 			break;
 		}
 	}
 	//duyet duoi
 	for (int i = position->row - 1; i >= 0; i--) {
-		if (checkAlly(board.squares[board.getSqrIdx(col, i)])) {
+		if (checkAlly(boardSquares[getSqrIdx(col, i)])) {
 			break;
 		}
-		squares.push_back(board.squares[board.getSqrIdx(col, i)]);
-		if (!checkAlly(board.squares[board.getSqrIdx(col, i)])) {
+		squares.push_back(boardSquares[getSqrIdx(col, i)]);
+		if (!checkAlly(boardSquares[getSqrIdx(col, i)])) {
 			break;
 		}
 	}
 	//duyet phai
 	for (char j= position->column + 1; j <= 'h';j++) {
-		if (checkAlly(board.squares[board.getSqrIdx(j, row)])) {
+		if (checkAlly(boardSquares[getSqrIdx(j, row)])) {
 			break;
 		}
-		squares.push_back(board.squares[board.getSqrIdx(j, row)]);
-		if (!checkAlly(board.squares[board.getSqrIdx(j, row)])) {
+		squares.push_back(boardSquares[getSqrIdx(j, row)]);
+		if (!checkAlly(boardSquares[getSqrIdx(j, row)])) {
 			break;
 		}
 	}
 	//duyet trai
 	for (char j = position->column - 1; j >= 'a'; j--) {
-		if (checkAlly(board.squares[board.getSqrIdx(j, row)])) {
+		if (checkAlly(boardSquares[getSqrIdx(j, row)])) {
 			break;
 		}
-		squares.push_back(board.squares[board.getSqrIdx(j, row)]);
-		if (!checkAlly(board.squares[board.getSqrIdx(j, row)])) {
+		squares.push_back(boardSquares[getSqrIdx(j, row)]);
+		if (!checkAlly(boardSquares[getSqrIdx(j, row)])) {
 			break;
 		}
 	}
