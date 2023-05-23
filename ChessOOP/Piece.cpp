@@ -25,7 +25,7 @@ void Piece::setCurrentPosition(Square* position) {
 	this->position = position;
 }
 
-void Piece::setStatus(const char& status) {
+void Piece::setStatus(const string& status) {
 	this->status = status;
 }
 
@@ -42,6 +42,7 @@ char Piece::getName() {
 	return name;
 }
 
+
 bool Piece::checkAlly(Square* s) {
 	if (name >= 'A' && name < 'Z' && s->piece->name >= 'A' && s->piece->name <= 'Z') {
 		return true;
@@ -51,6 +52,7 @@ bool Piece::checkAlly(Square* s) {
 	}
 	return false;
 }
-void Piece::move(Square* des) {
-	position = des;
+
+int Piece::getSqrIdx(char col, int row) {
+	return (row - 1) * 8 + (col - 'a');
 }
