@@ -1,6 +1,6 @@
 #include "Bishop.h"
 
-Bishop::Bishop(char name): Piece(name)
+Bishop::Bishop(char name) : Piece(name)
 {
 	if (name == 'B') img.loadFromFile("Image/wB.png");
 	else img.loadFromFile("Image/bB.png");
@@ -12,19 +12,53 @@ Bishop::~Bishop()
 
 }
 
-vector<Square*> Bishop::getValidMoves()
+vector<Square*> Bishop::getValidMoves(vector<Square*> boardSquares)
 {
 	vector<Square*> squares;
-	for (int i = 1; i <= 8; i++)
+	char col = position->column;
+	int row = position->row;
+
+	//bishop move
+	//tren trai
+	int chg = 1;
+	while (col - chg >= 'a' && row + chg <= 8)
 	{
-		for (int j = 'a'; j <= 'h'; j++)
-		{
-			if ((i != position->row && j != int(position->column)) && (abs(i - position->row) == abs(j - int(position->column))))
-			{
-				squares.push_back(new Square(j, i));
-			}
-		}
+		if (checkAlly(boardSquares[getSqrIdx(col - chg, row + chg)])) break;
+		squares.push_back(boardSquares[getSqrIdx(col - chg, row + chg)]);
+		if (!checkAlly(boardSquares[getSqrIdx(col - chg, row + chg)])) break;
+		chg++;
 	}
+
+	//duoi trai
+	chg = 1;
+	while (col - chg >= 'a' && row - chg >= 0 )
+	{
+		if (checkAlly(boardSquares[getSqrIdx(col - chg, row - chg)])) break;
+		squares.push_back(boardSquares[getSqrIdx(col - chg, row - chg)]);
+		if (!checkAlly(boardSquares[getSqrIdx(col - chg, row - chg)])) break;
+		chg++;
+	}
+
+	//tren phai
+	chg = 1;
+	while (col + chg <= 'h' && row + chg <= 8)
+	{
+		if (checkAlly(boardSquares[getSqrIdx(col + chg, row + chg)])) break;
+		squares.push_back(boardSquares[getSqrIdx(col + chg, row + chg)]);
+		if (!checkAlly(boardSquares[getSqrIdx(col + chg, row + chg)])) break;
+		chg++;
+	}
+
+	//duoi phai
+	chg = 1;
+	while (col + chg <= 'h' && row - chg >= 0)
+	{
+		if (checkAlly(boardSquares[getSqrIdx(col + chg, row - chg)])) break;
+		squares.push_back(boardSquares[getSqrIdx(col + chg, row - chg)]);
+		if (!checkAlly(boardSquares[getSqrIdx(col + chg, row - chg)])) break;
+		chg++;
+	}
+
 	return squares;
 }
 
