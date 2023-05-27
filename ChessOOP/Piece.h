@@ -9,7 +9,7 @@ using namespace std;
 class Piece {
 protected:
 	char name;
-	string status;
+	char status;
 	sf::Texture img;
 
 public:
@@ -22,10 +22,10 @@ public:
 
 	void setName(const char& name);
 	void setCurrentPosition(Square* position);
-	void setStatus(const string& status);
+	void setStatus(const char& status);
 
 	Square* getCurrentPosition();
-	string getStatus();
+	char getStatus();
 	char getName();
 
 	bool isWhite();

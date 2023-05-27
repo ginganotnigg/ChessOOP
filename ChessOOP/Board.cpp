@@ -40,35 +40,35 @@ void Board::createPieces(string& state)
 		{
 		case 'R': case 'r':
 			p = new Rook(temp);
-			p->position =  squares[sqrIdx];
+			p->position = squares[sqrIdx];
 			squares[sqrIdx]->piece = p;
 			pieces.push_back(p);
 			sqrIdx++;
 			break;
 		case 'N': case 'n':
 			p = new Knight(temp);
-			p->position =  squares[sqrIdx];
+			p->position = squares[sqrIdx];
 			squares[sqrIdx]->piece = p;
 			pieces.push_back(p);
 			sqrIdx++;
 			break;
 		case 'B': case 'b':
 			p = new Bishop(temp);
-			p->position =  squares[sqrIdx];
+			p->position = squares[sqrIdx];
 			squares[sqrIdx]->piece = p;
 			pieces.push_back(p);
 			sqrIdx++;
 			break;
 		case 'Q': case 'q':
 			p = new Queen(temp);
-			p->position =  squares[sqrIdx];
+			p->position = squares[sqrIdx];
 			squares[sqrIdx]->piece = p;
 			pieces.push_back(p);
 			sqrIdx++;
 			break;
 		case 'K': case 'k':
 			p = new King(temp);
-			p->position =  squares[sqrIdx];
+			p->position = squares[sqrIdx];
 			squares[sqrIdx]->piece = p;
 			pieces.push_back(p);
 			sqrIdx++;
@@ -129,20 +129,10 @@ void Board::addCurrentState(string& move)
 void Board::loadLastState()
 {
 	// Delete current board
-	for (auto i : squares)
-		delete i;
 	for (auto i : pieces)
 		delete i;
-	squares.clear();
 	pieces.clear();
-	// Create squares
-	for (int row = 1; row <= 8; row++)
-	{
-		for (char col = 'a'; col <= 'h'; col++)
-		{
-			squares.push_back(new Square(col, row));
-		}
-	}
+
 	// Load board recently
 	string lastState = allStates.back();
 	createPieces(lastState);
@@ -178,7 +168,7 @@ void Board::moveOrCapture(Square*& from, Square*& to) {
 	to->piece = from->piece;
 	from->piece = nullptr;
 	to->piece->position = to;
-	to->piece->setStatus("move");
+	//to->piece->setStatus('m');
 }
 
 bool Board::checkMovePermit(string& move)
@@ -228,6 +218,7 @@ vector<Square*> Board::permitMove(string& from)
 		else
 		{
 			validSquare.erase(validSquare.begin() + i);
+			i--;
 		}
 	}
 	return validSquare;

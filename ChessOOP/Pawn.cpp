@@ -22,7 +22,7 @@ vector<Square*> Pawn::getValidMoves(vector<Square*> boardSquares)
 	if (checkAlly(boardSquares[getSqrIdx(col, row + dy * 1)]) == -1) {
 		squares.push_back(boardSquares[getSqrIdx(col, row + dy * 1)]);
 	}
-	if (checkAlly(boardSquares[getSqrIdx(col, row + dy * 2)]) == -1 && getStatus() == "unmove") {
+	if (checkAlly(boardSquares[getSqrIdx(col, row + dy * 2)]) == -1 && getStatus() == 'u') {
 		squares.push_back(boardSquares[getSqrIdx(col, row + dy * 2)]);
 	}
 	if (checkAlly(boardSquares[getSqrIdx(col - 1, row + dy * 1)]) == 0) {
@@ -31,10 +31,10 @@ vector<Square*> Pawn::getValidMoves(vector<Square*> boardSquares)
 	if (checkAlly(boardSquares[getSqrIdx(col + 1, row + dy * 1)]) == 0) {
 		squares.push_back(boardSquares[getSqrIdx(col + 1, row + dy * 1)]);
 	}
-	if (checkAlly(boardSquares[getSqrIdx(col - 1, row)]) == 0 && boardSquares[getSqrIdx(col - 1, row)]->piece->getStatus() == "en_passant") {
+	if (checkAlly(boardSquares[getSqrIdx(col - 1, row)]) == 0 && boardSquares[getSqrIdx(col - 1, row)]->piece->getStatus() == 'e') {
 		squares.push_back(boardSquares[getSqrIdx(col - 1, row + dy * 1)]);
 	}
-	if (checkAlly(boardSquares[getSqrIdx(col + 1, row)]) == 0 && boardSquares[getSqrIdx(col + 1, row)]->piece->getStatus() == "en_passant") {
+	if (checkAlly(boardSquares[getSqrIdx(col + 1, row)]) == 0 && boardSquares[getSqrIdx(col + 1, row)]->piece->getStatus() == 'e') {
 		squares.push_back(boardSquares[getSqrIdx(col + 1, row + dy * 1)]);
 	}
 	return squares;
@@ -51,9 +51,4 @@ bool Pawn::checkEnPassant(Square* to) {
 
 bool Pawn::captureEnPassant(Square* to, vector<Square*> squares) {
 	return (to->piece != nullptr && to->piece->checkEnPassant(to));
-}
-
-bool Pawn::isValidMove()
-{
-	return 0;
 }

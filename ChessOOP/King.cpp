@@ -11,16 +11,6 @@ King::King(const char name) : Piece(name) {
 
 }
 
-bool King::isValidMove() {
-	for (char i = max((int)position->column - 1, (int)'a'); i <= min((int)position->column + 1, (int)'h'); i++) {
-		for (int j = max(position->row - 1, 1); j <= min(position->row + 1, 8); j++) {
-
-		}
-	}
-	return false;
-
-}
-
 vector<Square*> King::getValidMoves(vector<Square*> boardSquares) {
 	vector<Square*> squares;
 	char col = position->column;
@@ -62,7 +52,7 @@ bool King::checkCastle(vector<Square*> boardSquares, const char& rColumn, const 
 	for (int i = min(kingIdx, rookIdx) + 1; i < max(kingIdx, rookIdx); i++) {
 		middles.push_back(boardSquares[i]);
 	}
-	if (status != "unmove" || boardSquares[rookIdx]->piece->getStatus() != "unmove") {
+	if (status != 'u' || boardSquares[rookIdx]->piece->getStatus() != 'u') {
 		return false;
 	}
 	for (int i = 0; i < middles.size(); i++) {

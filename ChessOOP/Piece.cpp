@@ -3,13 +3,13 @@
 Piece::Piece() {
 	name = ' ';
 	position = nullptr;
-	status = "unmove";
+	status = 'u';		// unmove/move/pinned/checked/enpassant/*
 }
 
 Piece::Piece(const char& name) {
 	this->name = name;
 	this->position = nullptr;
-	this->status = "unmove";
+	this->status = 'u';
 }
 
 
@@ -25,7 +25,7 @@ void Piece::setCurrentPosition(Square* position) {
 	this->position = position;
 }
 
-void Piece::setStatus(const string& status) {
+void Piece::setStatus(const char& status) {
 	this->status = status;
 }
 
@@ -33,7 +33,7 @@ Square* Piece::getCurrentPosition() {
 	return position;
 }
 
-string Piece::getStatus() {
+char Piece::getStatus() {
 	return status;
 }
 

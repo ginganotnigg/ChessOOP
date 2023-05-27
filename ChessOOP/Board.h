@@ -19,6 +19,7 @@ public:
 	vector<string> allStates;
 	string from_move;
 	string initState = "RNBQKBNRPPPPPPPP********************************pppppppprnbqkbnr";
+	string status = "uuuuuuuuuuuuuuuu********************************uuuuuuuuuuuuuuuu";
 
 	void setPiece(char col, int row, Piece* piece);
 	void initBoard();
