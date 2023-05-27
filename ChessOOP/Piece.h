@@ -9,14 +9,16 @@ using namespace std;
 class Piece {
 protected:
 	char name;
-	Square* position;
 	string status;
 	sf::Texture img;
 
 public:
+	Square* position;
+	sf::Sprite sprite;
+
 	Piece();
 	Piece(const char& name);
-	~Piece();
+	virtual ~Piece();
 
 	void setName(const char& name);
 	void setCurrentPosition(Square* position);
@@ -25,11 +27,12 @@ public:
 	Square* getCurrentPosition();
 	string getStatus();
 	char getName();
+
+	bool isWhite();
+	int checkAlly(Square* s);
 	virtual vector<Square*> getValidMoves(vector<Square*> boardSquares) = 0;
-	bool checkAlly(Square* s);
-
-	int getSqrIdx(char col, int row);
-
-	sf::Sprite sprite;
-	sf::Vector2f imageSize;
+	virtual bool checkEnPassant(Square* to) { return false; }
+	virtual bool captureEnPassant(Square* to, vector<Square*> squares) { return false; }
 };
+
+int getSqrIdx(char col, int row);

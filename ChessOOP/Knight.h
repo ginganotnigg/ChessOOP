@@ -1,5 +1,6 @@
 #pragma once
 #include "Piece.h"
+
 class Knight : public Piece
 {
 public:
@@ -7,5 +8,4 @@ public:
 	~Knight();
 	vector<Square*> getValidMoves(vector<Square*> boardSquares);
 	bool isValidMove();
-
 };

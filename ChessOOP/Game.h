@@ -72,6 +72,10 @@ public:
 	bool getFinish();
 
 	// Updating functions
+	void menuEvents();
+	void ingameEvents();
+	void replayEvents();
+	void endgameEvents();
 	void pollEvents();
 	void updateText();
 	void updateMousePos();

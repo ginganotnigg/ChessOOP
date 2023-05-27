@@ -1,6 +1,8 @@
 #pragma once
+#pragma once
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <vector>
 using namespace std;
 
 class Piece;
@@ -11,11 +13,13 @@ public:
 	char column;
 	int row;
 	Piece* piece;
-	sf::Vector2f pieceSize = sf::Vector2f(70, 70);
+	sf::RectangleShape area;
 
-	Square();
 	Square(char col, int row);
 	~Square();
-	sf::Vector2f getCenter(char col, int row);
+	sf::Vector2f getSqrPos();
+	sf::Vector2f getPiecePos();
+	void clickPiece(sf::Event& e, sf::Vector2f& mouse, vector<Square*> boardSquares);
+	void drawValidMove();
 	void render(sf::RenderWindow*& window);
 };

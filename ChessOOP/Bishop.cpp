@@ -23,19 +23,19 @@ vector<Square*> Bishop::getValidMoves(vector<Square*> boardSquares)
 	int chg = 1;
 	while (col - chg >= 'a' && row + chg <= 8)
 	{
-		if (checkAlly(boardSquares[getSqrIdx(col - chg, row + chg)])) break;
+		if (checkAlly(boardSquares[getSqrIdx(col - chg, row + chg)]) == 1) break;
 		squares.push_back(boardSquares[getSqrIdx(col - chg, row + chg)]);
-		if (!checkAlly(boardSquares[getSqrIdx(col - chg, row + chg)])) break;
+		if (checkAlly(boardSquares[getSqrIdx(col - chg, row + chg)]) == 0) break;
 		chg++;
 	}
 
 	//duoi trai
 	chg = 1;
-	while (col - chg >= 'a' && row - chg >= 0 )
+	while (col - chg >= 'a' && row - chg >= 1)
 	{
-		if (checkAlly(boardSquares[getSqrIdx(col - chg, row - chg)])) break;
+		if (checkAlly(boardSquares[getSqrIdx(col - chg, row - chg)]) == 1) break;
 		squares.push_back(boardSquares[getSqrIdx(col - chg, row - chg)]);
-		if (!checkAlly(boardSquares[getSqrIdx(col - chg, row - chg)])) break;
+		if (checkAlly(boardSquares[getSqrIdx(col - chg, row - chg)]) == 0) break;
 		chg++;
 	}
 
@@ -43,19 +43,19 @@ vector<Square*> Bishop::getValidMoves(vector<Square*> boardSquares)
 	chg = 1;
 	while (col + chg <= 'h' && row + chg <= 8)
 	{
-		if (checkAlly(boardSquares[getSqrIdx(col + chg, row + chg)])) break;
+		if (checkAlly(boardSquares[getSqrIdx(col + chg, row + chg)]) == 1) break;
 		squares.push_back(boardSquares[getSqrIdx(col + chg, row + chg)]);
-		if (!checkAlly(boardSquares[getSqrIdx(col + chg, row + chg)])) break;
+		if (checkAlly(boardSquares[getSqrIdx(col + chg, row + chg)]) == 0) break;
 		chg++;
 	}
 
 	//duoi phai
 	chg = 1;
-	while (col + chg <= 'h' && row - chg >= 0)
+	while (col + chg <= 'h' && row - chg >= 1)
 	{
-		if (checkAlly(boardSquares[getSqrIdx(col + chg, row - chg)])) break;
+		if (checkAlly(boardSquares[getSqrIdx(col + chg, row - chg)]) == 1) break;
 		squares.push_back(boardSquares[getSqrIdx(col + chg, row - chg)]);
-		if (!checkAlly(boardSquares[getSqrIdx(col + chg, row - chg)])) break;
+		if (checkAlly(boardSquares[getSqrIdx(col + chg, row - chg)]) == 0) break;
 		chg++;
 	}
 

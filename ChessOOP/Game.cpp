@@ -112,6 +112,83 @@ bool Game::getFinish() {
     return false;
 }
 
+void Game::menuEvents() {
+    if (menuText[1].text.getGlobalBounds().contains(mousePosView)) {
+        sound[1].play();
+        soundLoop = false;
+        sound[0].stop();
+        draw_idx = 2;
+    }
+    if (menuText[2].text.getGlobalBounds().contains(mousePosView)) {
+        sound[1].play();
+        soundLoop = false;
+        sound[0].stop();
+        draw_idx = 2;
+    }
+    if (menuText[3].text.getGlobalBounds().contains(mousePosView)) {
+        sound[1].play();
+        soundLoop = false;
+        sound[0].stop();
+        draw_idx = 2;
+    }
+    if (menuText[4].text.getGlobalBounds().contains(mousePosView)) {
+        window->close();
+    }
+}
+
+void Game::ingameEvents() {
+    if (ingameText[3].text.getGlobalBounds().contains(mousePosView)) {
+        sound[1].play();
+        draw_idx = 4;
+    }
+    if (prom[0].getGlobalBounds().contains(mousePosView)) {
+        renderProm = false;
+    }
+    if (prom[1].getGlobalBounds().contains(mousePosView)) {
+        renderProm = false;
+    }
+    if (prom[2].getGlobalBounds().contains(mousePosView)) {
+        renderProm = false;
+    }
+    if (prom[3].getGlobalBounds().contains(mousePosView)) {
+        renderProm = false;
+    }
+}
+
+void Game::replayEvents() {
+    if (replayText[1].text.getGlobalBounds().contains(mousePosView)) {
+        sound[1].play();
+        replayPaused = !replayPaused;
+        if (replayPaused) {
+            replayText[1].text.setString("#");
+        }
+        else {
+            replayText[1].text.setString("[]");
+        }
+    }
+    if (replayText[3].text.getGlobalBounds().contains(mousePosView)) {
+        sound[1].play();
+        draw_idx = 1;
+        soundLoop = true;
+    }
+}
+
+void Game::endgameEvents() {
+    if (endgameText[0].text.getGlobalBounds().contains(mousePosView)) {
+        sound[1].play();
+        draw_idx = 2;
+    }
+    if (endgameText[1].text.getGlobalBounds().contains(mousePosView)) {
+        sound[1].play();
+        draw_idx = 3;
+    }
+    if (endgameText[2].text.getGlobalBounds().contains(mousePosView)) {
+        sound[1].play();
+        draw_idx = 1;
+        soundLoop = true;
+    }
+}
+
 void Game::pollEvents() {
     while (window->pollEvent(ev)) {
         if (sound[0].getStatus() == sf::SoundSource::Status::Stopped && soundLoop) sound[0].play();
@@ -126,73 +203,20 @@ void Game::pollEvents() {
         case this->ev.MouseButtonReleased: {
             if (ev.key.code == sf::Mouse::Left) {
                 // Menu button
-                if (menuText[1].text.getGlobalBounds().contains(mousePosView)) {
-                    sound[1].play();
-                    soundLoop = false;
-                    sound[0].stop();
-                    draw_idx = 2;
-                }
-                if (menuText[2].text.getGlobalBounds().contains(mousePosView)) {
-                    sound[1].play();
-                    soundLoop = false;
-                    sound[0].stop();
-                    draw_idx = 2;
-                }
-                if (menuText[3].text.getGlobalBounds().contains(mousePosView)) {
-                    sound[1].play();
-                    soundLoop = false;
-                    sound[0].stop();
-                    draw_idx = 2;
-                }
-                if (menuText[4].text.getGlobalBounds().contains(mousePosView)) {
-                    window->close();
+                if (draw_idx == 1) {
+                    menuEvents();
                 }
                 // Ingame button
-                if (ingameText[3].text.getGlobalBounds().contains(mousePosView)) {
-                    sound[1].play();
-                    draw_idx = 4;
-                }
-                if (prom[0].getGlobalBounds().contains(mousePosView)) {
-                    renderProm = false;
-                }
-                if (prom[1].getGlobalBounds().contains(mousePosView)) {
-                    renderProm = false;
-                }
-                if (prom[2].getGlobalBounds().contains(mousePosView)) {
-                    renderProm = false;
-                }
-                if (prom[3].getGlobalBounds().contains(mousePosView)) {
-                    renderProm = false;
+                if (draw_idx == 2) {
+                    ingameEvents();
                 }
                 // Replay button
-                if (replayText[1].text.getGlobalBounds().contains(mousePosView)) {
-                    sound[1].play();
-                    replayPaused = !replayPaused;
-                    if (replayPaused) {
-                        replayText[1].text.setString("#");
-                    }
-                    else {
-                        replayText[1].text.setString("[]");
-                    }
-                }
-                if (replayText[3].text.getGlobalBounds().contains(mousePosView)) {
-                    sound[1].play();
-                    draw_idx = 1;
-                    soundLoop = true;
+                if (draw_idx == 3) {
+                    replayEvents();
                 }
                 // Endgame button
-                if (endgameText[0].text.getGlobalBounds().contains(mousePosView)) {
-                    sound[1].play();
-                    draw_idx = 2;
-                }
-                if (endgameText[1].text.getGlobalBounds().contains(mousePosView)) {
-                    sound[1].play();
-                    draw_idx = 3;
-                }
-                if (endgameText[2].text.getGlobalBounds().contains(mousePosView)) {
-                    sound[1].play();
-                    draw_idx = 1;
-                    soundLoop = true;
+                if (draw_idx == 4) {
+                    endgameEvents();
                 }
             }
             break;
@@ -223,7 +247,9 @@ void Game::updateMousePos() {
 }
 
 void Game::clickPieces() {
-
+    if (draw_idx != 2) {
+        return;
+    }
 }
 
 void Game::movePieces() {
@@ -295,7 +321,9 @@ void Game::renderEndgame() {
 }
 
 void Game::renderPieces() {
-
+    if (draw_idx != 1) {
+        board.update(ev, mousePosView);
+    }
 }
 
 void Game::render() {

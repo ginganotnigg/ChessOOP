@@ -16,23 +16,24 @@ Knight::~Knight()
 vector<Square*> Knight::getValidMoves(vector<Square*> boardSquares)
 {
 	vector<Square*> squares;
-	char col = position->column;
-	int row = position->row;
-	for (int i = -2; i <= 2; i++)
-	{
-		if (i == 0) continue;
-		int chg = i;
-		if (i < 0) chg = -3 - i;
-		else chg = 3 - i;
-		if (col + i >= 'a' && col + i <= 'h')
-		{
-			if (row + chg > 0 && row + chg < 9 && !checkAlly(boardSquares[getSqrIdx(col + i, row + chg)]))
-				squares.push_back(boardSquares[getSqrIdx(col + i, row + chg)]);
-			if (row + chg > 0 && row + chg < 9 && !checkAlly(boardSquares[getSqrIdx(col + i, row - chg)]))
-				squares.push_back(boardSquares[getSqrIdx(col + i, row - chg)]);
+	int dx[4] = { -1, -2, 1, 2 };
+	int dy[4] = { -1, -2, 1, 2 };
+	for (int i = 0; i < 4; i++) {
+		for (int j = 0; j < 4; j++) {
+			if ((j - i) % 2 == 0) {
+				continue;
+			}
+			int newRow = position->row + dx[i];
+			char newCol = position->column + dy[j];
+			if (newRow < 1 || newRow > 8 || newCol < 'a' || newCol > 'h') {
+				continue;
+			}
+			if (checkAlly(boardSquares[getSqrIdx(newCol, newRow)]) == 1) {
+				continue;
+			}
+			squares.push_back(boardSquares[getSqrIdx(newCol, newRow)]);
 		}
 	}
-
 	return squares;
 }
 

@@ -8,12 +8,12 @@ Piece::Piece() {
 
 Piece::Piece(const char& name) {
 	this->name = name;
+	this->position = nullptr;
+	this->status = "unmove";
 }
 
 
 Piece::~Piece() {
-	delete position;
-	position = nullptr;
 }
 
 
@@ -29,7 +29,6 @@ void Piece::setStatus(const string& status) {
 	this->status = status;
 }
 
-
 Square* Piece::getCurrentPosition() {
 	return position;
 }
@@ -42,17 +41,20 @@ char Piece::getName() {
 	return name;
 }
 
-
-bool Piece::checkAlly(Square* s) {
-	if (name >= 'A' && name < 'Z' && s->piece->name >= 'A' && s->piece->name <= 'Z') {
-		return true;
-	}
-	if (name >= 'a' && name <= 'z' && s->piece->name >= 'a' && s->piece->name <= 'z') {
-		return true;
-	}
-	return false;
+bool Piece::isWhite() {
+	return (name >= 'A' && name <= 'Z');
 }
 
-int Piece::getSqrIdx(char col, int row) {
+int Piece::checkAlly(Square* s) {
+	if (s->piece == nullptr) {
+		return -1;
+	}
+	if (isWhite() == s->piece->isWhite()) {
+		return 1;
+	}
+	return 0;
+}
+
+int getSqrIdx(char col, int row) {
 	return (row - 1) * 8 + (col - 'a');
 }
