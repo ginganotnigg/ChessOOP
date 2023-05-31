@@ -9,6 +9,4 @@ public:
 	Pawn(char _symbol);
 	~Pawn();
 	vector<Square*> getValidMoves(vector<Square*> boardSquares);
-	bool checkEnPassant(Square* to);
-	bool captureEnPassant(Square* to, vector<Square*> squares);
 };
