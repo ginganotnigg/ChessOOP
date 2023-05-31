@@ -19,20 +19,23 @@ public:
 	vector<string> allStates;
 	string from_move;
 	string initState = "RNBQKBNRPPPPPPPP********************************pppppppprnbqkbnr";
-	string status = "uuuuuuuuuuuuuuuu********************************uuuuuuuuuuuuuuuu";
+	vector<string> allStatus;
+	string initStatus = "uuuuuuuuuuuuuuuu********************************uuuuuuuuuuuuuuuu";
 
 	void setPiece(char col, int row, Piece* piece);
 	void initBoard();
 	Board();
 	~Board();
-	void createPieces(string& state);
+	void createPieces(string& state, string& status);
 	void clickEvents(sf::Event& e, sf::Vector2f& mouse);
 	void moveEvents(sf::Event& e, sf::Vector2f& mouse);
 	void update(sf::Event& e, sf::Vector2f& mouse);
 	void render(sf::RenderWindow*& window);
 	void moveOrCapture(Square*& from, Square*& to);
+	void promotePawn(Square* to, char name);
 	void movePiece(string& move);
 	void addCurrentState(string& move);
+	void addCurrentStatus(string& move);
 	void loadLastState();
 	string getRowState(char& row);
 	void undoPiece();
