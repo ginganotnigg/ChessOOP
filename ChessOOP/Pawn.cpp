@@ -19,36 +19,47 @@ vector<Square*> Pawn::getValidMoves(vector<Square*> boardSquares)
 	int row = position->row;
 	char col = position->column;
 	int dy = (name < 91) ? 1 : -1;
-	if (checkAlly(boardSquares[getSqrIdx(col, row + dy * 1)]) == -1) {
+	if (checkAlly(boardSquares[getSqrIdx(col, row + dy * 1)]) == -1) 
+	{
 		squares.push_back(boardSquares[getSqrIdx(col, row + dy * 1)]);
 	}
-	if (checkAlly(boardSquares[getSqrIdx(col, row + dy * 2)]) == -1 && getStatus() == 'u') {
+
+	if (checkAlly(boardSquares[getSqrIdx(col, row + dy * 1)]) == -1 &&
+		checkAlly(boardSquares[getSqrIdx(col, row + dy * 2)]) == -1 &&
+		getStatus() == 'u') 
+	{
 		squares.push_back(boardSquares[getSqrIdx(col, row + dy * 2)]);
 	}
-	if (checkAlly(boardSquares[getSqrIdx(col - 1, row + dy * 1)]) == 0) {
+
+	if (checkAlly(boardSquares[getSqrIdx(col - 1, row + dy * 1)]) == 0 &&
+		col - 1 >= 'a' && col - 1 <= 'h')
+	{
 		squares.push_back(boardSquares[getSqrIdx(col - 1, row + dy * 1)]);
 	}
-	if (checkAlly(boardSquares[getSqrIdx(col + 1, row + dy * 1)]) == 0) {
+
+	if (checkAlly(boardSquares[getSqrIdx(col + 1, row + dy * 1)]) == 0 &&
+		col + 1 >= 'a' && col + 1 <= 'h')
+	{
 		squares.push_back(boardSquares[getSqrIdx(col + 1, row + dy * 1)]);
 	}
-	if (checkAlly(boardSquares[getSqrIdx(col - 1, row)]) == 0 && boardSquares[getSqrIdx(col - 1, row)]->piece->getStatus() == 'e') {
+
+	if (checkAlly(boardSquares[getSqrIdx(col - 1, row)]) == 0 &&
+		boardSquares[getSqrIdx(col - 1, row)]->piece->getStatus() == 'e')
+	{
 		squares.push_back(boardSquares[getSqrIdx(col - 1, row + dy * 1)]);
 	}
-	if (checkAlly(boardSquares[getSqrIdx(col + 1, row)]) == 0 && boardSquares[getSqrIdx(col + 1, row)]->piece->getStatus() == 'e') {
+
+	if (checkAlly(boardSquares[getSqrIdx(col + 1, row)]) == 0 &&
+		boardSquares[getSqrIdx(col + 1, row)]->piece->getStatus() == 'e')
+	{
 		squares.push_back(boardSquares[getSqrIdx(col + 1, row + dy * 1)]);
 	}
+
 	return squares;
 }
 
-bool Pawn::checkEnPassant(Square* to) {
-	int dx = to->column - position->column;
-	int dy = to->row - position->row;
-	if (abs(dy) != 2 || dx != 0) {
-		return false;
-	}
-	return true;
+bool Pawn::isValidMove()
+{
+	return 0;
 }
 
-bool Pawn::captureEnPassant(Square* to, vector<Square*> squares) {
-	return (to->piece != nullptr && to->piece->checkEnPassant(to));
-}
