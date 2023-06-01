@@ -15,7 +15,7 @@ void Board::initBoard() {
 
 	allStates.push_back(initState);
 	allStatus.push_back(initStatus);
-	createPieces(initState,initStatus);
+	createPieces(initState, initStatus);
 }
 
 Board::Board() {
@@ -30,7 +30,7 @@ Board::~Board() {
 	}
 }
 
-void Board::createPieces(string& state,string& status)
+void Board::createPieces(string& state, string& status)
 {
 	int sqrIdx = 0;
 	for (int j = 0; j < state.size(); j++)
@@ -88,15 +88,31 @@ void Board::createPieces(string& state,string& status)
 			sqrIdx++;
 			break;
 		case '*':
+			squares[sqrIdx]->piece = nullptr;
 			sqrIdx++;
 			break;
 		}
 	}
 }
 
-bool kingInCheck()
-{
-	// from square check tuong bi bat
+bool Board::whiteTurn() {
+	return (allStates.size() % 2 != 0);
+}
+
+Square* Board::getOwnKing(bool isWhite) {
+	char name = (isWhite) ? 'K' : 'k';
+	return squares[allStates.back().find(name)];
+}
+
+bool Board::kingInCheck() {
+	for (int i = 0; i < pieces.size(); i++) {
+		if (pieces[i]->isWhite() != whiteTurn()) {
+			vector<Square*> vals = pieces[i]->getValidMoves(squares);
+			if (find(vals.begin(), vals.end(), getOwnKing(whiteTurn())) != vals.end()) {
+				return true;
+			}
+		}
+	}
 	return false;
 }
 
@@ -135,44 +151,60 @@ void Board::addCurrentState(string& move)
 
 void Board::addCurrentStatus(string& move) {
 	string lastStatus = allStatus.back();
-	lastStatus[getSqrIdx(move[0], move[1] - '0')] = '*';
-	lastStatus[getSqrIdx(move[2], move[3] - '0')] = 'm';
-	char temp = 'm';
-	squares[getSqrIdx(move[2], move[3] - '0')]->piece->setStatus(temp);
-	if ((squares[getSqrIdx(move[2], move[3] - '0')]->piece != nullptr) &&
-		(squares[getSqrIdx(move[2], move[3] - '0')]->piece->getName() == 'P' ||
-			squares[getSqrIdx(move[2], move[3] - '0')]->piece->getName() == 'p') &&
+	int fromIdx = getSqrIdx(move[0], move[1] - '0');
+	lastStatus[fromIdx] = '*';
+
+	int toIdx = getSqrIdx(move[2], move[3] - '0');
+	char mov = 'm';
+	char enp = 'e';
+
+	lastStatus[toIdx] = 'm';
+	squares[toIdx]->piece->setStatus(mov);
+
+	// En passant situation
+	for (int i = 0; i < squares.size(); i++) {
+		if ((squares[i]->piece != nullptr) &&
+			lastStatus[i] == 'e')
+		{
+			lastStatus[i] = 'm';
+			squares[i]->piece->setStatus(mov);
+		}
+	}
+
+	if ((squares[toIdx]->piece != nullptr) &&
+		(squares[toIdx]->piece->getName() == 'P' || squares[toIdx]->piece->getName() == 'p') &&
 		(abs(move[3] - move[1]) == 2))
 	{
-		lastStatus[getSqrIdx(move[2], move[3] - '0')] = 'e';
-		char temp1 = 'e';
-		squares[getSqrIdx(move[2], move[3] - '0')]->piece->setStatus(temp1);
+		lastStatus[toIdx] = 'e';
+		squares[toIdx]->piece->setStatus(enp);
 	}
-	if (squares[getSqrIdx(move[2], move[3] - '0')]->piece != nullptr
-		&& squares[getSqrIdx(move[2], move[3] - '0')]->piece->getName() == 'K') {
+
+	// Castle situation
+	if (squares[toIdx]->piece != nullptr
+		&& squares[toIdx]->piece->getName() == 'K') {
 		if (move == "e1c1") {
 			lastStatus[getSqrIdx('a', 1)] = '*';
 			lastStatus[getSqrIdx('d', 1)] = 'm';
-			squares[getSqrIdx('d',1)]->piece->setStatus(temp);
+			squares[getSqrIdx('d', 1)]->piece->setStatus(mov);
 		}
 		else if (move == "e1g1") {
 			lastStatus[getSqrIdx('h', 1)] = '*';
 			lastStatus[getSqrIdx('f', 1)] = 'm';
-			squares[getSqrIdx('f', 1)]->piece->setStatus(temp);
+			squares[getSqrIdx('f', 1)]->piece->setStatus(mov);
 		}
 	}
-	if (squares[getSqrIdx(move[2], move[3] - '0')]->piece != nullptr
-		&&squares[getSqrIdx(move[2], move[3] - '0')]->piece->getName() == 'k'
+	if (squares[toIdx]->piece != nullptr
+		&& squares[toIdx]->piece->getName() == 'k'
 		) {
 		if (move == "e8c8") {
 			lastStatus[getSqrIdx('a', 8)] = '*';
 			lastStatus[getSqrIdx('d', 8)] = 'm';
-			squares[getSqrIdx('d', 1)]->piece->setStatus(temp);
+			squares[getSqrIdx('d', 1)]->piece->setStatus(mov);
 		}
 		else if (move == "e8g8") {
 			lastStatus[getSqrIdx('h', 8)] = '*';
 			lastStatus[getSqrIdx('f', 8)] = 'm';
-			squares[getSqrIdx('f', 1)]->piece->setStatus(temp);
+			squares[getSqrIdx('f', 1)]->piece->setStatus(mov);
 		}
 	}
 	allStatus.push_back(lastStatus);
@@ -187,7 +219,7 @@ void Board::loadLastState()
 	// Load board recently
 	string lastState = allStates.back();
 	string lastStatus = allStatus.back();
-	createPieces(lastState,lastStatus);
+	createPieces(lastState, lastStatus);
 }
 
 void Board::undoPiece()
@@ -216,12 +248,12 @@ void Board::moveOrCapture(Square*& from, Square*& to) {
 		}
 		delete to->piece;
 	}
-	//EnPassant
+	//En passant
 	int dx = abs(to->column - from->column);
 	int dy = abs(to->row - from->row);
 	if (to->piece == nullptr && squares[getSqrIdx(to->column, from->row)]->piece != nullptr &&
-	    ((from->piece->getName() == 'P' && squares[getSqrIdx(to->column, from->row)]->piece->getName() == 'p')||
-		 (from->piece->getName() == 'p' && squares[getSqrIdx(to->column, from->row)]->piece->getName() == 'P')) &&
+		((from->piece->getName() == 'P' && squares[getSqrIdx(to->column, from->row)]->piece->getName() == 'p') ||
+			(from->piece->getName() == 'p' && squares[getSqrIdx(to->column, from->row)]->piece->getName() == 'P')) &&
 		dx == 1 && dy == 1 &&
 		squares[getSqrIdx(to->column, from->row)]->piece->getStatus() == 'e')
 	{
@@ -237,7 +269,7 @@ void Board::moveOrCapture(Square*& from, Square*& to) {
 		delete squares[getSqrIdx(to->column, from->row)]->piece;
 		squares[getSqrIdx(to->column, from->row)]->piece = nullptr;
 	}
-	
+
 	// Move Piece
 	to->piece = from->piece;
 	from->piece = nullptr;
@@ -292,11 +324,46 @@ vector<Square*> Board::permitMove(string& from)
 		else
 		{
 			validSquare.erase(validSquare.begin() + i);
+			i--;
 		}
 	}
 	return validSquare;
 }
 
+void Board::promotePawn(Square* to)
+{
+	Piece* promote = nullptr;
+	switch (namePromote)
+	{
+	case 'r':
+		promote = (to->piece->getName() == 'p') ? new Rook('r') : new Rook('R');
+		break;
+	case 'b':
+		promote = (to->piece->getName() == 'p') ? new Bishop('b') : new Bishop('B');
+		break;
+	case 'n':
+		promote = (to->piece->getName() == 'p') ? new Knight('n') : new Knight('N');
+		break;
+	case 'q':
+		promote = (to->piece->getName() == 'p') ? new Queen('q') : new Queen('Q');
+		break;
+	}
+
+	// Delete piece at to
+	for (int i = 0; i < pieces.size(); i++)
+	{
+		if (pieces[i] == to->piece)
+		{
+			pieces.erase(pieces.begin() + i);
+		}
+	}
+	delete to->piece;
+
+	// Add promote piece at to
+	promote->position = to;
+	to->piece = promote;
+	pieces.push_back(promote);
+}
 void Board::movePiece(string& move)
 {
 	// Set from and to
@@ -327,39 +394,23 @@ void Board::movePiece(string& move)
 	{
 		moveOrCapture(R_from, R_to);
 	}
-
 	// Move or capture
 	moveOrCapture(from, to);
-
-	// Promote Pawn to Queen/Rook if necessary
+	// Promote Pawn to Queen/Rook/Bishop/Knight if necessary
 	if ((to->piece->getName() == 'P' && to->row == 8) || (to->piece->getName() == 'p' && to->row == 1))
 	{
-		
-		Piece* promote =  (to->piece->getName() == 'p') ? new Rook('r') : new Rook('R');
-		promote->position = to;
-		for (int i = 0; i < pieces.size(); i++)
-		{
-			if (pieces[i] == to->piece)
-			{
-				pieces.erase(pieces.begin() + i);
-			}
-		}
-		delete to->piece;
-		to->piece = promote;
-		pieces.push_back(promote);
+		isPromote = true;
+		promotePawn(to);
 	}
-
 	// Add state to next turn
 	addCurrentState(move);
 	addCurrentStatus(move);
-	cout << allStatus.back() << endl;
 }
 
 void Board::clickEvents(sf::Event& e, sf::Vector2f& mouse) {
-	bool whiteTurn = (allStates.size() % 2 != 0);
 	for (int i = 0; i < pieces.size(); i++) {
 		if (e.key.code == sf::Mouse::Left && pieces[i]->sprite.getGlobalBounds().contains(mouse)
-			&& pieces[i]->isWhite() == whiteTurn) {
+			&& pieces[i]->isWhite() == whiteTurn()) {
 			switch (e.type) {
 
 			case e.MouseButtonPressed: {
@@ -371,13 +422,10 @@ void Board::clickEvents(sf::Event& e, sf::Vector2f& mouse) {
 
 			case e.MouseButtonReleased: {
 				from_move = pieces[i]->position->column + to_string(pieces[i]->position->row);
-				for (int j = 0; j < pieces[i]->getValidMoves(squares).size(); j++) {
-					pieces[i]->getValidMoves(squares)[j]->drawValidMove();
+				vector<Square*> pers = permitMove(from_move);
+				for (int j = 0; j < pers.size(); j++) {
+					pers[j]->drawValidMove();
 				}
-				//vector<Square*> pmm = permitMove(from_move);
-				//for (int j = 0; j < pmm.size(); j++) {
-				//	pieces[i]->getValidMoves(squares)[j]->drawValidMove();
-				//}
 				i = pieces.size();
 				break;
 			}
@@ -400,7 +448,6 @@ void Board::moveEvents(sf::Event& e, sf::Vector2f& mouse) {
 					break;
 				}
 				move = from_move + to_move;
-				cout << move << " ";
 				movePiece(move);
 				i = squares.size();
 				for (auto i : squares) {
@@ -409,6 +456,19 @@ void Board::moveEvents(sf::Event& e, sf::Vector2f& mouse) {
 				break;
 			}
 			}
+		}
+	}
+	checkEvents();
+}
+
+void Board::checkEvents() {
+	Square* own_king = getOwnKing(whiteTurn());
+	if (kingInCheck()) {
+		own_king->drawCheck();
+	}
+	else {
+		if (own_king->area.getFillColor().a != 0) {
+			own_king->area.setFillColor(sf::Color(0, 0, 0, 0));
 		}
 	}
 }

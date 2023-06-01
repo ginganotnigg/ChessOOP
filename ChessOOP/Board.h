@@ -21,6 +21,8 @@ public:
 	string initState = "RNBQKBNRPPPPPPPP********************************pppppppprnbqkbnr";
 	vector<string> allStatus;
 	string initStatus = "uuuuuuuuuuuuuuuu********************************uuuuuuuuuuuuuuuu";
+	char namePromote;
+	char isPromote;
 
 	void setPiece(char col, int row, Piece* piece);
 	void initBoard();
@@ -29,10 +31,11 @@ public:
 	void createPieces(string& state, string& status);
 	void clickEvents(sf::Event& e, sf::Vector2f& mouse);
 	void moveEvents(sf::Event& e, sf::Vector2f& mouse);
+	void checkEvents();
 	void update(sf::Event& e, sf::Vector2f& mouse);
 	void render(sf::RenderWindow*& window);
 	void moveOrCapture(Square*& from, Square*& to);
-	void promotePawn(Square* to, char name);
+	void promotePawn(Square* to);
 	void movePiece(string& move);
 	void addCurrentState(string& move);
 	void addCurrentStatus(string& move);
@@ -41,4 +44,7 @@ public:
 	void undoPiece();
 	vector<Square*> permitMove(string& from);
 	bool checkMovePermit(string& move);
+	bool whiteTurn();
+	Square* getOwnKing(bool isWhite);
+	bool kingInCheck();
 };

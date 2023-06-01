@@ -19,7 +19,7 @@ public:
 	~Square();
 	sf::Vector2f getSqrPos();
 	sf::Vector2f getPiecePos();
-	void clickPiece(sf::Event& e, sf::Vector2f& mouse, vector<Square*> boardSquares);
 	void drawValidMove();
+	void drawCheck();
 	void render(sf::RenderWindow*& window);
 };
