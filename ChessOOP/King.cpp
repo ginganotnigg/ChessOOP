@@ -11,7 +11,7 @@ King::King(const char name) : Piece(name) {
 
 }
 
-vector<Square*> King::getValidMoves(vector<Square*>& boardSquares) {
+vector<Square*> King::getValidMoves(vector<Square*> boardSquares) {
 	vector<Square*> squares;
 	char col = position->column;
 	int row = position->row;
