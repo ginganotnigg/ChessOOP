@@ -13,20 +13,21 @@ Pawn::~Pawn()
 {
 }
 
-vector<Square*> Pawn::getValidMoves(vector<Square*> boardSquares)
+vector<Square*> Pawn::getValidMoves(vector<Square*>& boardSquares)
 {
 	vector<Square*> squares;
 	int row = position->row;
 	char col = position->column;
 	int dy = (name < 91) ? 1 : -1;
-	if (checkAlly(boardSquares[getSqrIdx(col, row + dy * 1)]) == -1) 
+	if (checkAlly(boardSquares[getSqrIdx(col, row + dy * 1)]) == -1)
 	{
 		squares.push_back(boardSquares[getSqrIdx(col, row + dy * 1)]);
 	}
 
-	if (checkAlly(boardSquares[getSqrIdx(col, row + dy * 1)]) == -1 &&
-		checkAlly(boardSquares[getSqrIdx(col, row + dy * 2)]) == -1 &&
-		getStatus() == 'u') 
+	if (getStatus() == 'u' &&
+		checkAlly(boardSquares[getSqrIdx(col, row + dy * 1)]) == -1 &&
+		checkAlly(boardSquares[getSqrIdx(col, row + dy * 2)]) == -1
+		)
 	{
 		squares.push_back(boardSquares[getSqrIdx(col, row + dy * 2)]);
 	}
@@ -57,9 +58,3 @@ vector<Square*> Pawn::getValidMoves(vector<Square*> boardSquares)
 
 	return squares;
 }
-
-bool Pawn::isValidMove()
-{
-	return 0;
-}
-
