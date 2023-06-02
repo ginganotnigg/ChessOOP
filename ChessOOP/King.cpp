@@ -76,22 +76,3 @@ void King::castle(Square* rook) {
 		rook->column = 'f';
 	}
 }
-
-bool King::isChecked(vector<Square*>& boardSquares) {
-	for (char i = 'a'; i <= 'h'; i++) {
-		for (int j = 1; j <= 8; j++) {
-			if (checkAlly(boardSquares[getSqrIdx(i, j)]) == 0) {
-				return checkPosInOpponentListOfMoves(boardSquares[getSqrIdx(i, j)]->piece, boardSquares);
-			}
-		}
-	}	return false;
-}
-
-bool King::checkPosInOpponentListOfMoves(Piece* p, vector<Square*>& boardSquares) {
-	vector<Square*> vMoves = p->getValidMoves(boardSquares);
-	for (int i = 0; i < vMoves.size(); i++) {
-		if (position == vMoves[i])
-			return true;
-	}
-	return false;
-}
