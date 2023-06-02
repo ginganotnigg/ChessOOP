@@ -13,7 +13,7 @@ Pawn::~Pawn()
 {
 }
 
-vector<Square*> Pawn::getValidMoves(vector<Square*>& boardSquares)
+vector<Square*> Pawn::getValidMoves(vector<Square*> boardSquares)
 {
 	vector<Square*> squares;
 	int row = position->row;
