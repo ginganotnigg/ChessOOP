@@ -18,33 +18,46 @@ public:
 	vector<Piece*> pieces;
 	vector<string> allStates;
 	string from_move;
-	string initState = "RNBQKBNRPPPPPPPP********************************pppppppprnbqkbnr";
 	vector<string> allStatus;
-	string initStatus = "uuuuuuuuuuuuuuuu********************************uuuuuuuuuuuuuuuu";
+	string initState;
+	string initStatus;
 	char namePromote;
-	char isPromote;
+	bool isPromote;
+	sf::RectangleShape promBox;
+	sf::Texture promTxt[4];
+	sf::Sprite prom[4];
 
+	// Initialize
 	void setPiece(char col, int row, Piece* piece);
+	void initPromote();
 	void initBoard();
 	Board();
 	~Board();
 	void createPieces(string& state, string& status);
-	void clickEvents(sf::Event& e, sf::Vector2f& mouse);
-	void moveEvents(sf::Event& e, sf::Vector2f& mouse);
-	void checkEvents();
-	void update(sf::Event& e, sf::Vector2f& mouse);
-	void render(sf::RenderWindow*& window);
-	void moveOrCapture(Square*& from, Square*& to);
-	void promotePawn(Square* to);
-	void movePiece(string& move);
+	string getRowState(char& row);
+	void loadLastState();
+	void loadState(const int& idx);
 	void addCurrentState(string& move);
 	void addCurrentStatus(string& move);
-	void loadLastState();
-	string getRowState(char& row);
-	void undoPiece();
-	vector<Square*> permitMove(string& from);
-	bool checkMovePermit(string& move);
+
+	// Board function
 	bool whiteTurn();
 	Square* getOwnKing(bool isWhite);
-	bool kingInCheck();
+	bool kingInCheck(Square*& king);
+	void checkAlert();
+	void moveOrCapture(Square*& from, Square*& to);
+	void promotePawn(Square*& to);
+	void movePiece(string& move);
+	void undoMove();
+	bool checkMovePermit(string& move);
+	vector<Square*> permitMove(string& from);
+
+	// Update and render
+	void targetEvents(sf::Event& e, sf::Vector2f& mouse);
+	void moveEvents(sf::Event& e, sf::Vector2f& mouse);
+	void promoteEvents(sf::Event& e, sf::Vector2f& mouse);
+	void update(sf::Event& e, sf::Vector2f& mouse);
+
+	void renderPromote(sf::RenderWindow*& window);
+	void render(sf::RenderWindow*& window);
 };
