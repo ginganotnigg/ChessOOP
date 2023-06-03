@@ -22,4 +22,4 @@ public:
 	void drawValidMove();
 	void drawCheck();
 	void render(sf::RenderWindow*& window);
-};
+};	

@@ -7,5 +7,4 @@ public:
 	Knight(char name);
 	~Knight();
 	vector<Square*> getValidMoves(vector<Square*> boardSquares);
-	bool isValidMove();
 };

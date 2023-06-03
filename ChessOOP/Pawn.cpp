@@ -33,7 +33,7 @@ vector<Square*> Pawn::getValidMoves(vector<Square*> boardSquares)
 	}
 
 	if (col - 1 >= 'a' && col - 1 <= 'h' && checkAlly(boardSquares[getSqrIdx(col - 1, row + dy * 1)]) == 0)
-		
+
 	{
 		squares.push_back(boardSquares[getSqrIdx(col - 1, row + dy * 1)]);
 	}

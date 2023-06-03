@@ -9,5 +9,4 @@ public:
 	vector<Square*> getValidMoves(vector<Square*> boardSquares);
 
 	bool checkCastle(vector<Square*> boardSquares, const char& rColumn, const int& rRow);
-	void castle(Square* rook);
 };

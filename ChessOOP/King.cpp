@@ -42,20 +42,20 @@ vector<Square*> King::getValidMoves(vector<Square*> boardSquares) {
 	return squares;
 }
 
-bool King::checkCastle(vector<Square*>& boardSquares, const char& rColumn, const int& rRow) {
+bool King::checkCastle(vector<Square*> boardSquares, const char& rColumn, const int& rRow) {
 	vector<Square*> middles;
 	if (position->row != rRow) {
 		return false;
 	}
-	
 	int kingIdx = getSqrIdx(position->column, position->row);
 	int rookIdx = getSqrIdx(rColumn, rRow);
-	if (boardSquares[rookIdx]->piece == nullptr)
+	if (boardSquares[rookIdx]->piece == nullptr) {
 		return false;
+	}
 	for (int i = min(kingIdx, rookIdx) + 1; i < max(kingIdx, rookIdx); i++) {
 		middles.push_back(boardSquares[i]);
 	}
-	if (getStatus() != 'u' || boardSquares[rookIdx]->piece->getStatus() != 'u') {
+	if (status != 'u' || boardSquares[rookIdx]->piece->getStatus() != 'u') {
 		return false;
 	}
 	for (int i = 0; i < middles.size(); i++) {
@@ -66,13 +66,3 @@ bool King::checkCastle(vector<Square*>& boardSquares, const char& rColumn, const
 	return true;
 }
 
-void King::castle(Square* rook) {
-	if (rook->column == 'a') {
-		position->column = 'd';
-		rook->column = 'c';
-	}
-	else if (rook->column == 'h') {
-		position->column = 'g';
-		rook->column = 'f';
-	}
-}

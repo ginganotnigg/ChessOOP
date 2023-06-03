@@ -61,7 +61,3 @@ vector<Square*> Bishop::getValidMoves(vector<Square*> boardSquares)
 
 	return squares;
 }
-
-bool Bishop::isValidMove() {
-	return 0;
-}

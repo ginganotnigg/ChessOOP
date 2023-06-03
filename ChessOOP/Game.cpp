@@ -6,6 +6,9 @@ void Game::initVariables() {
     soundLoop = true;
     replayPaused = false;
     renderProm = false;
+    whiteTime = 600;
+    blackTime = 601;
+    isWhite = true;
 }
 
 void Game::initWindow() {
@@ -23,7 +26,7 @@ void Game::initSound() {
     soundBf[4].loadFromFile("Sound/check.wav");
     soundBf[5].loadFromFile("Sound/notify.wav");
     soundBf[6].loadFromFile("Sound/gameover.wav");
-    for (int i = 0; i < 6; i++) {
+    for (int i = 0; i < 7; i++) {
         sound[i].setBuffer(soundBf[i]);
     }
     sound[0].setLoop(soundLoop);
@@ -31,27 +34,31 @@ void Game::initSound() {
 
 void Game::initFont() {
     font.loadFromFile("Font/DisposableDroidBB_bld.ttf");
+    font1.loadFromFile("Font/FiraCode-Bold.ttf");
 }
 
 void Game::initText() {
-    menuText[0].initText(font, 60, "NOOBCHESS", sf::Vector2f(430, 60), 1, sf::Color(255, 215, 158));
+    menuText[0].initText(font1, 60, "NOOBCHESS", sf::Vector2f(430, 60), 1, sf::Color(255, 215, 158));
     menuText[0].text.setOutlineColor(sf::Color(209, 139, 71));
     menuText[0].text.setOutlineThickness(2.5);
-    menuText[1].initText(font, 35, "Play Human", sf::Vector2f(360, 330), 2);
-    menuText[2].initText(font, 35, "Play Easy Bot", sf::Vector2f(360, 400), 2);
-    menuText[3].initText(font, 35, "Play Hard Bot", sf::Vector2f(360, 470), 2);
-    menuText[4].initText(font, 35, "Exit", sf::Vector2f(360, 540), 2);
-    ingameText[0].initText(font, 35, "Undo", sf::Vector2f(780, 220), 2);
-    ingameText[1].initText(font, 35, "Redo", sf::Vector2f(900, 220), 2);
-    ingameText[2].initText(font, 35, "Flip Board", sf::Vector2f(800, 300), 2);
-    ingameText[3].initText(font, 40, "Resign", sf::Vector2f(820, 420), 2);
-    replayText[0].initText(font, 35, "<<", sf::Vector2f(780, 270), 2);
-    replayText[1].initText(font, 35, "[]", sf::Vector2f(845, 270), 2);
-    replayText[2].initText(font, 35, ">>", sf::Vector2f(900, 270), 2);
-    replayText[3].initText(font, 40, "Return", sf::Vector2f(800, 390), 2);
-    endgameText[0].initText(font, 35, "Rematch", sf::Vector2f(390, 420), 2, sf::Color(209, 139, 71));
-    endgameText[1].initText(font, 35, "Replay", sf::Vector2f(600, 420), 2, sf::Color(209, 139, 71));
-    endgameText[2].initText(font, 35, "Return", sf::Vector2f(500, 480), 2, sf::Color(209, 139, 71));
+    menuText[1].initText(font1, 45, "PvP", sf::Vector2f(360, 330), 2);
+    menuText[2].initText(font1, 45, "How to Play", sf::Vector2f(360, 400), 2);
+    menuText[3].initText(font1, 45, "Exit", sf::Vector2f(360, 540), 2);
+    ingameText[0].initText(font, 40, "Undo", sf::Vector2f(835, 220), 2);
+    ingameText[1].initText(font, 40, "Resign", sf::Vector2f(820, 340), 2);
+    ingameText[2].initText(font, 40, "10:00", sf::Vector2f(322, -10), 1, sf::Color(150, 150, 150));
+    ingameText[3].initText(font, 40, "10:00", sf::Vector2f(322, 670), 1, sf::Color(150, 150, 150));
+    replayText[0].initText(font, 35, "<<", sf::Vector2f(815, 270), 2);
+    replayText[1].initText(font, 35, ">>", sf::Vector2f(875, 270), 2);
+    replayText[2].initText(font, 40, "Return", sf::Vector2f(805, 330), 2);
+    endgameText[0].initText(font, 35, "Rematch", sf::Vector2f(822, 420), 2, sf::Color(209, 139, 71));
+    endgameText[1].initText(font, 35, "Replay", sf::Vector2f(835, 480), 2, sf::Color(209, 139, 71));
+    endgameText[2].initText(font, 35, "Return", sf::Vector2f(832, 540), 2, sf::Color(209, 139, 71));
+    endgameText[3].initText(font, 45, "White win", sf::Vector2f(795, 240), 1, sf::Color(70, 90, 70));
+    endgameText[4].initText(font, 30, "By resignation!", sf::Vector2f(785, 300), 1, sf::Color(70, 90, 70));
+
+    string tuto = "The rules are the same as regular chess, except for those changes:\n Each player has 10 minutes with no ince";
+    menuText[1].initText(font1, 45, "PvP", sf::Vector2f(360, 330), 2);
 }
 
 void Game::initBgr() {
@@ -59,8 +66,8 @@ void Game::initBgr() {
     bgr.setTexture(bgrTxt);
     bgr.setColor(sf::Color(255, 255, 255, 120));
     bgr.scale(2.3f, 2.3f);
-    whiteRect.setSize(sf::Vector2f(500, 400));
-    whiteRect.setPosition(290, 160);
+    whiteRect.setSize(sf::Vector2f(320, 400));
+    whiteRect.setPosition(720, 200);
     whiteRect.setFillColor(sf::Color(255, 215, 158));
     whiteRect.setOutlineColor(sf::Color(191, 69, 63));
     whiteRect.setOutlineThickness(4);
@@ -68,6 +75,11 @@ void Game::initBgr() {
 
 void Game::initBoard() {
     board.initBoard();
+    repIdx = 0;
+    resign = false;
+    timeout = false;
+    whiteTime = 600;
+    blackTime = 600;
 }
 
 void Game::initPromote() {
@@ -76,22 +88,23 @@ void Game::initPromote() {
     promBox.setFillColor(sf::Color(255, 215, 158));
     promBox.setOutlineColor(sf::Color(191, 69, 63));
     promBox.setOutlineThickness(4);
-        promTxt[0].loadFromFile("Image/wQ.png");
-        prom[0].setTexture(promTxt[0]);
-        promTxt[1].loadFromFile("Image/wR.png");
-        prom[1].setTexture(promTxt[1]);
-        promTxt[2].loadFromFile("Image/wN.png");
-        prom[2].setTexture(promTxt[2]);
-        promTxt[3].loadFromFile("Image/wB.png");
-        prom[3].setTexture(promTxt[3]);
+    promTxt[0].loadFromFile("Image/wQ.png");
+    prom[0].setTexture(promTxt[0]);
+    promTxt[1].loadFromFile("Image/wR.png");
+    prom[1].setTexture(promTxt[1]);
+    promTxt[2].loadFromFile("Image/wN.png");
+    prom[2].setTexture(promTxt[2]);
+    promTxt[3].loadFromFile("Image/wB.png");
+    prom[3].setTexture(promTxt[3]);
     for (int i = 0; i < 4; i++) {
         prom[i].setPosition(730 + 70.0 * i, 100);
+        prom[i].setColor(sf::Color(40, 80, 100, 150));
     }
 }
 
+
 Game::Game() {
     initBgr();
-    initBoard();
     initVariables();
     initWindow();
     initSound();
@@ -109,8 +122,19 @@ bool Game::running() {
     return window->isOpen();
 }
 
-bool Game::getFinish() {
-    return false;
+bool Game::getEndgame() {
+    return (resign || timeout || (board.allStates.size() > 1 && board.checkGameover() != '*'));
+}
+
+void Game::promoteHover() {
+    for (int i = 0; i < 4; i++) {
+        if (prom[i].getGlobalBounds().contains(mousePosView)) {
+            prom[i].setColor(sf::Color(140, 180, 200, 230));
+        }
+        else {
+            prom[i].setColor(sf::Color(40, 80, 100, 150));
+        }
+    }
 }
 
 void Game::menuEvents() {
@@ -118,60 +142,79 @@ void Game::menuEvents() {
         sound[1].play();
         soundLoop = false;
         sound[0].stop();
+        initBoard();
         draw_idx = 2;
     }
     if (menuText[2].text.getGlobalBounds().contains(mousePosView)) {
         sound[1].play();
         soundLoop = false;
         sound[0].stop();
-        draw_idx = 2;
+        initBoard();
+        draw_idx = 5;
     }
     if (menuText[3].text.getGlobalBounds().contains(mousePosView)) {
-        sound[1].play();
-        soundLoop = false;
-        sound[0].stop();
-        draw_idx = 2;
-    }
-    if (menuText[4].text.getGlobalBounds().contains(mousePosView)) {
         window->close();
     }
 }
 
 void Game::ingameEvents() {
-    if (ingameText[3].text.getGlobalBounds().contains(mousePosView)) {
+    if (ingameText[0].text.getGlobalBounds().contains(mousePosView)) {
         sound[1].play();
-        draw_idx = 4;
+        if (board.allStates.size() > 2) {
+            if (isWhite && whiteTime > 200) {
+                //whiteTime -= 290;
+                whiteTime -= 200;
+                board.undoMove();
+                board.undoMove();
+            }
+            if (!isWhite && blackTime > 200) {
+                blackTime -= 200;
+                board.undoMove();
+                board.undoMove();
+            }
+        }
+    }
+    if (ingameText[1].text.getGlobalBounds().contains(mousePosView)) {
+        sound[1].play();
+        resign = true;
     }
     if (prom[0].getGlobalBounds().contains(mousePosView)) {
         board.namePromote = 'q';
+        sound[1].play();
         renderProm = false;
+        board.isPromote = false;
     }
     if (prom[1].getGlobalBounds().contains(mousePosView)) {
         board.namePromote = 'r';
+        sound[1].play();
         renderProm = false;
+        board.isPromote = false;
     }
     if (prom[2].getGlobalBounds().contains(mousePosView)) {
         board.namePromote = 'n';
+        sound[1].play();
         renderProm = false;
+        board.isPromote = false;
     }
     if (prom[3].getGlobalBounds().contains(mousePosView)) {
         board.namePromote = 'b';
+        sound[1].play();
         renderProm = false;
     }
 }
 
 void Game::replayEvents() {
-    if (replayText[1].text.getGlobalBounds().contains(mousePosView)) {
+    if (replayText[0].text.getGlobalBounds().contains(mousePosView) && repIdx > 0) {
+        repIdx--;
         sound[1].play();
-        replayPaused = !replayPaused;
-        if (replayPaused) {
-            replayText[1].text.setString("#");
-        }
-        else {
-            replayText[1].text.setString("[]");
-        }
+        board.loadState(repIdx);
     }
-    if (replayText[3].text.getGlobalBounds().contains(mousePosView)) {
+    if (replayText[1].text.getGlobalBounds().contains(mousePosView) && repIdx < board.allStates.size() - 1) {
+        repIdx++;
+        sound[1].play();
+        board.loadState(repIdx);
+    }
+    if (replayText[2].text.getGlobalBounds().contains(mousePosView)) {
         sound[1].play();
         draw_idx = 1;
         soundLoop = true;
@@ -181,11 +224,13 @@ void Game::replayEvents() {
 void Game::endgameEvents() {
     if (endgameText[0].text.getGlobalBounds().contains(mousePosView)) {
         sound[1].play();
+        initBoard();
         draw_idx = 2;
     }
     if (endgameText[1].text.getGlobalBounds().contains(mousePosView)) {
         sound[1].play();
         draw_idx = 3;
+        board.loadState(0);
     }
     if (endgameText[2].text.getGlobalBounds().contains(mousePosView)) {
         sound[1].play();
@@ -199,6 +244,11 @@ void Game::pollEvents() {
         if (sound[0].getStatus() == sf::SoundSource::Status::Stopped && soundLoop) sound[0].play();
         // Window events
         switch (ev.type) {
+            
+        case this->ev.MouseMoved: {
+            promoteHover();
+            break;
+        }
 
         case this->ev.Closed: {
             window->close();
@@ -231,14 +281,42 @@ void Game::pollEvents() {
     }
 }
 
+void Game::updateWhiteTime() {
+    std::stringstream sst;
+    ingameText[3].text.setFillColor(sf::Color(255, 255, 255));
+    ingameText[2].text.setFillColor(sf::Color(150, 150, 150));
+    int duration = (int)timer.getElapsedTime().asSeconds();
+    if (duration > 0 && whiteTime > 0) {
+        whiteTime--;
+        timer.restart();
+    }
+    sst << ((whiteTime / 60 < 10) ? "0" + to_string(whiteTime / 60) : to_string(whiteTime / 60)) << ":"
+        << ((whiteTime % 60 < 10) ? "0" + to_string(whiteTime % 60) : to_string(whiteTime % 60));
+    ingameText[3].text.setString(sst.str());
+}
+
+void Game::updateBlackTime() {
+    std::stringstream sst;
+    ingameText[2].text.setFillColor(sf::Color(255, 255, 255));
+    ingameText[3].text.setFillColor(sf::Color(150, 150, 150));
+    int duration = (int)timer.getElapsedTime().asSeconds();
+    if (duration > 0 && blackTime > 0) {
+        blackTime--;
+        timer.restart();
+    }
+    sst << ((blackTime / 60 < 10) ? "0" + to_string(blackTime / 60) : to_string(blackTime / 60)) << ":"
+        << ((blackTime % 60 < 10) ? "0" + to_string(blackTime % 60) : to_string(blackTime % 60));
+    ingameText[2].text.setString(sst.str());
+}
+
 void Game::updateText() {
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 4; i++) {
         menuText[i].update(ev, mousePosView);
     }
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 4; i++) {
         ingameText[i].update(ev, mousePosView);
     }
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 3; i++) {
         replayText[i].update(ev, mousePosView);
     }
     for (int i = 0; i < 5; i++) {
@@ -251,44 +329,95 @@ void Game::updateMousePos() {
     mousePosView = window->mapPixelToCoords(mousePos);
 }
 
-void Game::updatePromote() {
-    if (board.isPromote)
-    {
+void Game::updateBoard() {
+    board.update(ev, mousePosView, sound);
+    isWhite = board.whiteTurn();
+    if (board.isPromote) {
         renderProm = true;
-        board.isPromote = false;
     }
-    
+    else {
+        renderProm = false;
+    }
+    if (isWhite) {
+        updateWhiteTime();
+    }
+    else {
+        updateBlackTime();
+    }
+    if (whiteTime <= 0 || blackTime <= 0) {
+        timeout = true;
+    }
 }
 
-void Game::clickPieces() {
-    if (draw_idx != 2) {
+void Game::updateEndgame() {
+    sound[6].play();
+    if (resign) {
+        string alert = (isWhite) ? "Black win" : "White win";
+        endgameText[3].text.setString(alert);
+        endgameText[3].text.setPosition(sf::Vector2f(794 + isWhite, 240));
+        endgameText[4].text.setString("By resignation!");
+        endgameText[4].text.setPosition(sf::Vector2f(785, 300));
         return;
     }
-}
 
-void Game::movePieces() {
+    if (timeout) {
+        string alert = (whiteTime <= 0) ? "Black win" : "White win";
+        endgameText[3].text.setString(alert);
+        endgameText[3].text.setPosition(sf::Vector2f(794 + isWhite, 240));
+        endgameText[4].text.setString("By timeout!");
+        endgameText[4].text.setPosition(sf::Vector2f(812, 300));
+        return;
+    }
 
-}
+    switch (board.checkGameover()) {
 
-void Game::capturePieces() {
+    case 'i': {
+        endgameText[3].text.setString("Draw");
+        endgameText[3].text.setPosition(sf::Vector2f(835, 240));
+        endgameText[4].text.setString("By insufficient pieces!");
+        endgameText[4].text.setPosition(sf::Vector2f(735, 300));
+        break;
+    }
 
-}
+    case 'f': {
+        endgameText[3].text.setString("Draw");
+        endgameText[3].text.setPosition(sf::Vector2f(835, 240));
+        endgameText[4].text.setString("By 50-move rule!");
+        endgameText[4].text.setPosition(sf::Vector2f(775, 300));
+        break;
+    }
 
-void Game::checkmatePieces() {
+    case 's': {
+        endgameText[3].text.setString("Draw");
+        endgameText[3].text.setPosition(sf::Vector2f(835, 240));
+        endgameText[4].text.setString("By stalemate!");
+        endgameText[4].text.setPosition(sf::Vector2f(795, 300));
+        break;
+    }
 
+    case 'c': {
+        string alert = (isWhite) ? "Black win" : "White win";
+        endgameText[3].text.setString(alert);
+        endgameText[3].text.setPosition(sf::Vector2f(794 + isWhite, 240));
+        endgameText[4].text.setString("By checkmate!");
+        endgameText[4].text.setPosition(sf::Vector2f(793, 300));
+        break;
+    }
+            
+    case '*':
+        break;
+
+    }
 }
 
 void Game::update() {
     updateMousePos();
     pollEvents();
-    if (running()) {
-        clickPieces();
-        movePieces();
-        capturePieces();
-        checkmatePieces();
-        updateText();
-        updateMousePos();
-        updatePromote();
+    updateText();
+    updateBoard();
+    if (getEndgame()) {
+        draw_idx = 4;
+        updateEndgame();
     }
 }
 
@@ -297,33 +426,28 @@ void Game::renderBgr() {
 }
 
 void Game::renderBoard() {
-    board.render(window);
-}
-
-void Game::renderPromote() {
-    if (!renderProm) {
-        return;
-    }
-    window->draw(promBox);
-    for (int i = 0; i < 4; i++) {
-        window->draw(prom[i]);
+    if (draw_idx != 1) {
+        board.render(window);
     }
 }
 
 void Game::renderMenu() {
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 4; i++) {
         menuText[i].render(window);
     }
 }
 
 void Game::renderIngame() {
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 4; i++) {
         ingameText[i].render(window);
     }
+    /*for (int i = 0; i < 2; i++) {
+        ingameText[i].render(window);
+    }*/
 }
 
 void Game::renderReplay() {
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 3; i++) {
         replayText[i].render(window);
     }
 }
@@ -335,9 +459,12 @@ void Game::renderEndgame() {
     }
 }
 
-void Game::renderPieces() {
-    if (draw_idx != 1) {
-        board.update(ev, mousePosView);
+void Game::renderPromote() {
+    if (renderProm) {
+        window->draw(promBox);
+        for (int i = 0; i < 4; i++) {
+            window->draw(prom[i]);
+        }
     }
 }
 
@@ -352,7 +479,6 @@ void Game::render() {
 
     case 2: {
         renderBoard();
-        renderPieces();
         renderIngame();
         renderPromote();
         break;
@@ -360,14 +486,12 @@ void Game::render() {
 
     case 3: {
         renderBoard();
-        renderPieces();
         renderReplay();
         break;
     }
 
     case 4: {
         renderBoard();
-        renderPieces();
         renderEndgame();
         break;
     }

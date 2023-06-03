@@ -2,6 +2,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
+#include <SFML/System.hpp>
 #include <iostream>
 #include <sstream>
 #include <vector>
@@ -19,12 +20,24 @@ private:
 	sf::RenderWindow* window;
 	sf::Event ev;
 	sf::ContextSettings settings;
+	sf::Clock timer;
 
 	// Mouse positions
 	sf::Vector2i mousePos;
 	sf::Vector2f mousePosView;
 
-	// Board & Pieces
+	// Board & Initial
+	Board board;
+	int repIdx;
+	bool renderProm;
+	int whiteTime;
+	int blackTime;
+	bool resign;
+	bool timeout;
+	int isWhite;
+	sf::RectangleShape promBox;
+	sf::Texture promTxt[4];
+	sf::Sprite prom[4];
 
 	// Sounds
 	sf::SoundBuffer soundBf[7];
@@ -32,24 +45,21 @@ private:
 
 	// Texts
 	sf::Font font;
-	GUIText menuText[5];
-	GUIText ingameText[5];
-	GUIText replayText[4];
+	sf::Font font1;
+	GUIText menuText[4];
+	GUIText ingameText[4];
+	GUIText replayText[3];
 	GUIText endgameText[5];
+	GUIText tutorialText;
 
 	// Variables
 	int draw_idx;
 	bool soundLoop;
 	bool replayPaused;
-	bool renderProm = false;
-	Board board;
 
 	// Background
 	sf::Texture bgrTxt;
 	sf::Sprite bgr;
-	sf::RectangleShape promBox;
-	sf::Texture promTxt[4];
-	sf::Sprite prom[4];
 	sf::RectangleShape whiteRect;
 
 	// Private funcs
@@ -69,22 +79,22 @@ public:
 
 	// Accessors
 	bool running();
-	bool getFinish();
+	bool getEndgame();
 
 	// Updating functions
+	void promoteHover();
 	void menuEvents();
 	void ingameEvents();
 	void replayEvents();
 	void endgameEvents();
 	void pollEvents();
+	void updateWhiteTime();
+	void updateBlackTime();
 	void updateText();
 	void updateMousePos();
-	void clickPieces();
-	void capturePieces();
-	void movePieces();
-	void checkmatePieces();
+	void updateBoard();
+	void updateEndgame();
 	void update();
-	void updatePromote();
 
 	// Rendering functions
 	void renderBoard();
@@ -94,6 +104,5 @@ public:
 	void renderReplay();
 	void renderEndgame();
 	void renderPromote();
-	void renderPieces();
 	void render();
 };

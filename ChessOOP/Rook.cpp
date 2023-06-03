@@ -10,12 +10,6 @@ Rook::Rook(const char name) : Piece(name) {
 
 }
 
-bool Rook::isValidMove() {
-
-	return false;
-
-}
-
 vector<Square*> Rook::getValidMoves(vector<Square*> boardSquares) {
 	vector<Square*> squares;
 	int row = position->row;

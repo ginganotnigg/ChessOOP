@@ -88,8 +88,3 @@ vector<Square*> Queen::getValidMoves(vector<Square*> boardSquares)
 
 	return squares;
 }
-
-bool Queen::isValidMove()
-{
-	return 0;
-}

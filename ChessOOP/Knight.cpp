@@ -36,8 +36,3 @@ vector<Square*> Knight::getValidMoves(vector<Square*> boardSquares)
 	}
 	return squares;
 }
-
-bool Knight::isValidMove()
-{
-	return 0;
-}

@@ -6,31 +6,31 @@ void Board::setPiece(char col, int row, Piece* piece) {
 	pieces.push_back(piece);
 }
 
-void Board::initPromote() {
-	promBox.setSize(sf::Vector2f(280, 70));
-	promBox.setPosition(730, 100);
-	promBox.setFillColor(sf::Color(255, 215, 158));
-	promBox.setOutlineColor(sf::Color(191, 69, 63));
-	promBox.setOutlineThickness(4);
-	promTxt[0].loadFromFile("Image/wQ.png");
-	prom[0].setTexture(promTxt[0]);
-	promTxt[1].loadFromFile("Image/wR.png");
-	prom[1].setTexture(promTxt[1]);
-	promTxt[2].loadFromFile("Image/wN.png");
-	prom[2].setTexture(promTxt[2]);
-	promTxt[3].loadFromFile("Image/wB.png");
-	prom[3].setTexture(promTxt[3]);
-	for (int i = 0; i < 4; i++) {
-		prom[i].setPosition(730 + 70.0 * i, 100);
-	}
-}
-
 void Board::initBoard() {
-	initState = "RNBQKBNRPPPPPPPP********************************pppppppprnbqkbnr";
-	initStatus = "uuuuuuuuuuuuuuuu********************************uuuuuuuuuuuuuuuu";
+	//initState = "RNBQKBNRPPPPPPPP********************************pppppppprnbqkbnr";
+	//initStatus = "uuuuuuuuuuuuuuuu********************************uuuuuuuuuuuuuuuu";
+	// Stalemate
+	//initState = "********************************************KQ****************k*";
+	//initStatus = "********************************************mm****************m*";
+	// Insufficience
+	initState = "***************************************n***pKB*********k********";
+	initStatus = "***************************************m***mmm*********m********";
+	// 50-move rule
+	//initState = "*******************PK******P*PN****pPp******p********kb*********";
+	//initStatus = "*******************mm******m*mm****mmm******m********mm*********";
+	//moves_since_capture = 47;
+	// Checkmate
+	//initState = "**********n********R*********************K***************k******";
+	//initStatus = "**********m********m*********************m***************m******";
+	// Promote
+	//initState = "RNBQKBNRPPPPPPP********************************Ppppppppprnbqkbnr";
+	//initStatus = "uuuuuuuuuuuuuuu********************************uuuuuuuuuuuuuuuuu";
+	// Castle
+	//initState = "RNBQK**RPPPPPPPP********************************ppppppppr***kbnr";
+	//initStatus = "uuuuu**uuuuuuuuu********************************uuuuuuuuu***uuuu";
+	moves_since_capture = 0;
 	namePromote = ' ';
 	isPromote = false;
-	initPromote();
 
 	for (int row = 1; row <= 8; row++) {
 		for (char col = 'a'; col <= 'h'; col++) {
@@ -144,9 +144,10 @@ bool Board::kingInCheck(Square*& king) {
 	return false;
 }
 
-void Board::checkAlert() {
+void Board::checkAlert(sf::Sound sound[]) {
 	Square* own_king = getOwnKing(whiteTurn());
 	if (kingInCheck(own_king)) {
+		sound[4].play();
 		own_king->drawCheck();
 	}
 	else {
@@ -261,6 +262,20 @@ void Board::loadLastState()
 	// Load board recently
 	string lastState = allStates.back();
 	string lastStatus = allStatus.back();
+	createPieces(lastState, lastStatus);
+}
+
+void Board::loadState(const int& idx)
+{
+	// Delete current board
+	for (auto i : pieces) {
+		delete i;
+		i = nullptr;
+	}
+	pieces.clear();
+	// Load board recently
+	string lastState = allStates[idx];
+	string lastStatus = allStates[idx];
 	createPieces(lastState, lastStatus);
 }
 
@@ -406,8 +421,8 @@ void Board::promotePawn(Square*& to)
 		promote = (namePawn == 'p') ? new Queen('q') : new Queen('Q');
 		break;
 	}
-	promote->position = to;
 	to->piece = promote;
+	promote->position = to;
 	pieces.push_back(promote);
 }
 
@@ -416,6 +431,7 @@ void Board::movePiece(string& move)
 	// Set from and to
 	Square* from = squares[getSqrIdx(move[0], move[1] - '0')];
 	Square* to = squares[getSqrIdx(move[2], move[3] - '0')];
+
 	// Check castle and move rooks if necessary
 	int kRow = 0;
 	if (from->piece->getName() == 'K') {
@@ -447,15 +463,63 @@ void Board::movePiece(string& move)
 	{
 		promotePawn(to);
 	}
-
 	// Add state to next turn
 	addCurrentState(move);
 	addCurrentStatus(move);
-	//cout << allStates.back() << endl;
-	//cout << allStatus.back() << endl;
 }
 
-void Board::targetEvents(sf::Event& e, sf::Vector2f& mouse) {
+bool Board::canMove(bool isWhite)
+{
+	for (char i = 'a'; i <= 'h'; i++)
+	{
+		for (int j = 1; j < 8; j++)
+		{
+			if (squares[getSqrIdx(i, j)]->piece != nullptr && squares[getSqrIdx(i, j)]->piece->isWhite() == isWhite) {
+				string from = i + to_string(j);
+				if (permitMove(from).size() > 0) {
+					return true;
+				}
+			}
+		}
+	}
+	return false;
+}
+
+char Board::checkGameover()
+{
+	//Fifty move rule
+	if (moves_since_capture >= 50) return 'f';
+
+	//Checking insufficient material
+	if (pieces.size() < 3) return 'i';
+	if (pieces.size() < 4)
+	{
+		std::string symbols;
+		for (auto i : pieces) symbols.push_back(i->getName());
+		if (symbols.find('R') == -1 && symbols.find('r') == -1 &&
+			symbols.find('Q') == -1 && symbols.find('q') == -1 &&
+			symbols.find('P') == -1 && symbols.find('p') == -1)
+			return 'i';
+	}
+	if (pieces.size() < 5)
+	{
+		std::string symbols;
+		for (auto i : pieces) symbols.push_back(i->getName());
+		if (symbols.find('b') != -1 && symbols.find('B') != -1 ||
+			symbols.find('b') != -1 && symbols.find('N') != -1 ||
+			symbols.find('n') != -1 && symbols.find('B') != -1 ||
+			symbols.find('n') != -1 && symbols.find('N') != -1)
+			return 'i';
+	}
+
+	// Mate
+	Square* own_king = getOwnKing(whiteTurn());
+	if (kingInCheck(own_king) && !canMove(whiteTurn())) return 'c';
+	if (!canMove(whiteTurn())) return 's';
+	return '*';
+}
+
+void Board::targetEvents(sf::Event& e, sf::Vector2f& mouse, sf::Sound sound[]) {
 	for (int i = 0; i < pieces.size(); i++) {
 		if (e.key.code == sf::Mouse::Left && pieces[i]->sprite.getGlobalBounds().contains(mouse)
 			&& pieces[i]->isWhite() == whiteTurn()) {
@@ -465,6 +529,7 @@ void Board::targetEvents(sf::Event& e, sf::Vector2f& mouse) {
 				for (auto i : squares) {
 					i->area.setFillColor(sf::Color(0, 0, 0, 0));
 				}
+				sound[1].play();
 				break;
 			}
 
@@ -475,23 +540,26 @@ void Board::targetEvents(sf::Event& e, sf::Vector2f& mouse) {
 					pers[j]->drawValidMove();
 				}
 				i = pieces.size();
-
-				if (squares[getSqrIdx(from_move[0], from_move[1] - '0')]->piece != nullptr && 
+				if (squares[getSqrIdx(from_move[0], from_move[1] - '0')]->piece != nullptr &&
 					((squares[getSqrIdx(from_move[0], from_move[1] - '0')]->piece->getName() == 'P' && from_move[1] == '7') ||
-					 (squares[getSqrIdx(from_move[0], from_move[1] - '0')]->piece->getName() == 'p' && from_move[1] == '2')))
+						(squares[getSqrIdx(from_move[0], from_move[1] - '0')]->piece->getName() == 'p' && from_move[1] == '2')))
 				{
 					isPromote = true;
 				}
-
+				else {
+					isPromote = false;
+				}
 				break;
-				
 			}
 			}
 		}
 	}
 }
 
-void Board::moveEvents(sf::Event& e, sf::Vector2f& mouse) {
+void Board::moveEvents(sf::Event& e, sf::Vector2f& mouse, sf::Sound sound[]) {
+	if (isPromote) {
+		return;
+	}
 	for (int i = 0; i < squares.size(); i++) {
 		string move;
 		string to_move;
@@ -506,11 +574,20 @@ void Board::moveEvents(sf::Event& e, sf::Vector2f& mouse) {
 					break;
 				}
 				move = from_move + to_move;
+				int last_size = pieces.size();
 				movePiece(move);
 				i = squares.size();
 				loadLastState();
+				if (pieces.size() < last_size) {
+					moves_since_capture = 0;
+					sound[3].play();
+				}
+				else {
+					moves_since_capture++;
+					sound[2].play();
+				}
 				for (auto sqr : squares) { sqr->area.setFillColor(sf::Color(0, 0, 0, 0)); }
-				checkAlert();
+				checkAlert(sound);
 				break;
 			}
 			}
@@ -518,20 +595,17 @@ void Board::moveEvents(sf::Event& e, sf::Vector2f& mouse) {
 	}
 }
 
-
-
-void Board::update(sf::Event& e, sf::Vector2f& mouse) {
-	/*if (isPromote) {
-		promoteEvents(e, mouse);
-		isPromote = false;
-	}
-	else {*/
-	targetEvents(e, mouse);
-	moveEvents(e, mouse);
-	//}
+void Board::update(sf::Event& e, sf::Vector2f& mouse, sf::Sound sound[]) {
+	targetEvents(e, mouse, sound);
+	moveEvents(e, mouse, sound);
 }
 
-
+void Board::renderPromote(sf::RenderWindow*& window) {
+	window->draw(promBox);
+	for (int i = 0; i < 4; i++) {
+		window->draw(prom[i]);
+	}
+}
 
 void Board::render(sf::RenderWindow*& window) {
 	window->draw(board);
