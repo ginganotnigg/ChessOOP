@@ -32,14 +32,13 @@ vector<Square*> Pawn::getValidMoves(vector<Square*> boardSquares)
 		squares.push_back(boardSquares[getSqrIdx(col, row + dy * 2)]);
 	}
 
-	if (checkAlly(boardSquares[getSqrIdx(col - 1, row + dy * 1)]) == 0 &&
-		col - 1 >= 'a' && col - 1 <= 'h')
+	if (col - 1 >= 'a' && col - 1 <= 'h' && checkAlly(boardSquares[getSqrIdx(col - 1, row + dy * 1)]) == 0)
+		
 	{
 		squares.push_back(boardSquares[getSqrIdx(col - 1, row + dy * 1)]);
 	}
 
-	if (checkAlly(boardSquares[getSqrIdx(col + 1, row + dy * 1)]) == 0 &&
-		col + 1 >= 'a' && col + 1 <= 'h')
+	if (col + 1 >= 'a' && col + 1 <= 'h' && checkAlly(boardSquares[getSqrIdx(col + 1, row + dy * 1)]) == 0)
 	{
 		squares.push_back(boardSquares[getSqrIdx(col + 1, row + dy * 1)]);
 	}
