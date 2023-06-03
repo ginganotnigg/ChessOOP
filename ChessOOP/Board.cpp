@@ -26,8 +26,8 @@ void Board::initPromote() {
 }
 
 void Board::initBoard() {
-	initState = "R***KBNRPPPPPPPP********************************pppppppprnbqk**r";
-	initStatus = "u***uuuuuuuuuuuu********************************uuuuuuuuuuuuu**u";
+	initState = "RNBQKBNRPPPPPPPP********************************pppppppprnbqkbnr";
+	initStatus = "uuuuuuuuuuuuuuuu********************************uuuuuuuuuuuuuuuu";
 	namePromote = ' ';
 	isPromote = false;
 	initPromote();
@@ -379,50 +379,43 @@ vector<Square*> Board::permitMove(string& from)
 
 void Board::promotePawn(Square*& to)
 {
-	Piece* promote = nullptr;
-	switch (namePromote)
-	{
-	case 'q':
-		promote = (to->piece->getName() == 'p') ? new Queen('q') : new Queen('Q');
-		break;
-	case 'r':
-		promote = (to->piece->getName() == 'p') ? new Rook('r') : new Rook('R');
-		break;
-	case 'n':
-		promote = (to->piece->getName() == 'p') ? new Knight('n') : new Knight('N');
-		break;
-	case 'b':
-		promote = (to->piece->getName() == 'p') ? new Bishop('b') : new Bishop('B');
-		break;
-	}
-	if (promote == nullptr) {
-		return;
-	}
-
-	// Delete Piece at to
+	char namePawn = to->piece->getName();
 	for (int i = 0; i < pieces.size(); i++)
 	{
 		if (pieces[i] == to->piece)
 		{
-			delete to->piece;
-			to->piece = nullptr;
 			pieces.erase(pieces.begin() + i);
 			break;
 		}
 	}
-
-	// Add promote piece at to
+	delete to->piece;
+	to->piece = nullptr;
+	Piece* promote = nullptr;
+	switch (namePromote)
+	{
+	case 'r':
+		promote = (namePawn == 'p') ? new Rook('r') : new Rook('R');
+		break;
+	case 'b':
+		promote = (namePawn == 'p') ? new Bishop('b') : new Bishop('B');
+		break;
+	case 'n':
+		promote = (namePawn == 'p') ? new Knight('n') : new Knight('N');
+		break;
+	case 'q':
+		promote = (namePawn == 'p') ? new Queen('q') : new Queen('Q');
+		break;
+	}
 	promote->position = to;
 	to->piece = promote;
 	pieces.push_back(promote);
-	//allStates.back()[getSqrIdx(to->column, to->row)] = namePromote;
 }
+
 void Board::movePiece(string& move)
 {
 	// Set from and to
 	Square* from = squares[getSqrIdx(move[0], move[1] - '0')];
 	Square* to = squares[getSqrIdx(move[2], move[3] - '0')];
-
 	// Check castle and move rooks if necessary
 	int kRow = 0;
 	if (from->piece->getName() == 'K') {
@@ -450,21 +443,11 @@ void Board::movePiece(string& move)
 	// Move or capture
 	moveOrCapture(from, to);
 	// Promote Pawn to Queen/Rook/Bishop/Knight if necessary
-	if ((to->piece->getName() == 'P' && to->row == 8) || (to->piece->getName() == 'p' && to->row == 1))
+	if (to->piece != nullptr && (to->piece->getName() == 'P' && to->row == 8) || (to->piece->getName() == 'p' && to->row == 1))
 	{
-		Piece* promote = (to->piece->getName() == 'p') ? new Rook('r') : new Rook('R');
-		promote->position = to;
-		for (int i = 0; i < pieces.size(); i++)
-		{
-			if (pieces[i] == to->piece)
-			{
-				pieces.erase(pieces.begin() + i);
-			}
-		}
-		delete to->piece;
-		to->piece = promote;
-		pieces.push_back(promote);
+		promotePawn(to);
 	}
+
 	// Add state to next turn
 	addCurrentState(move);
 	addCurrentStatus(move);
@@ -492,7 +475,16 @@ void Board::targetEvents(sf::Event& e, sf::Vector2f& mouse) {
 					pers[j]->drawValidMove();
 				}
 				i = pieces.size();
+
+				if (squares[getSqrIdx(from_move[0], from_move[1] - '0')]->piece != nullptr && 
+					((squares[getSqrIdx(from_move[0], from_move[1] - '0')]->piece->getName() == 'P' && from_move[1] == '7') ||
+					 (squares[getSqrIdx(from_move[0], from_move[1] - '0')]->piece->getName() == 'p' && from_move[1] == '2')))
+				{
+					isPromote = true;
+				}
+
 				break;
+				
 			}
 			}
 		}
@@ -528,48 +520,6 @@ void Board::moveEvents(sf::Event& e, sf::Vector2f& mouse) {
 
 
 
-void Board::promoteEvents(sf::Event& e, sf::Vector2f& mouse) {
-	switch (e.type) {
-
-	case e.MouseMoved: {
-		for (int i = 0; i < 4; i++) {
-			if (prom[i].getGlobalBounds().contains(mouse)) {
-				prom[i].setColor(sf::Color(0, 255, 204, 50));
-			}
-			else {
-				prom[i].setColor(sf::Color(100, 120, 110, 230));
-			}
-		}
-	}
-
-	case e.MouseButtonPressed: {
-		if (e.key.code == sf::Mouse::Left) {
-			if (prom[0].getGlobalBounds().contains(mouse)) {
-				namePromote = 'q';
-			}
-			if (prom[1].getGlobalBounds().contains(mouse)) {
-				namePromote = 'r';
-			}
-			if (prom[2].getGlobalBounds().contains(mouse)) {
-				namePromote = 'n';
-			}
-			if (prom[3].getGlobalBounds().contains(mouse)) {
-				namePromote = 'b';
-			}
-		}
-	}
-
-	case e.MouseButtonReleased: {
-		for (int i = 0; i < 4; i++) {
-			if (e.key.code == sf::Mouse::Left && prom[i].getGlobalBounds().contains(mouse)) {
-				isPromote = false;
-			}
-		}
-	}
-
-	}
-}
-
 void Board::update(sf::Event& e, sf::Vector2f& mouse) {
 	/*if (isPromote) {
 		promoteEvents(e, mouse);
@@ -581,19 +531,11 @@ void Board::update(sf::Event& e, sf::Vector2f& mouse) {
 	//}
 }
 
-void Board::renderPromote(sf::RenderWindow*& window) {
-	window->draw(promBox);
-	for (int i = 0; i < 4; i++) {
-		window->draw(prom[i]);
-	}
-}
+
 
 void Board::render(sf::RenderWindow*& window) {
 	window->draw(board);
 	for (int i = 0; i < squares.size(); i++) {
 		squares[i]->render(window);
 	}
-	/*if (isPromote) {
-		renderPromote(window);
-	}*/
 }
