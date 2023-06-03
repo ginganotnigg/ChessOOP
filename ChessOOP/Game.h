@@ -41,7 +41,7 @@ private:
 	int draw_idx;
 	bool soundLoop;
 	bool replayPaused;
-	bool renderProm;
+	bool renderProm = false;
 	Board board;
 
 	// Background
@@ -84,6 +84,7 @@ public:
 	void movePieces();
 	void checkmatePieces();
 	void update();
+	void updatePromote();
 
 	// Rendering functions
 	void renderBoard();
