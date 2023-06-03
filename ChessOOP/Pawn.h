@@ -9,5 +9,4 @@ public:
 	Pawn(char _symbol);
 	~Pawn();
 	vector<Square*> getValidMoves(vector<Square*> boardSquares);
-	bool isValidMove();
 };
