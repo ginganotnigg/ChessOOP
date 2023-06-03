@@ -5,7 +5,7 @@ void Game::initVariables() {
     draw_idx = 1;
     soundLoop = true;
     replayPaused = false;
-    renderProm = true;
+    renderProm = false;
 }
 
 void Game::initWindow() {
@@ -76,14 +76,14 @@ void Game::initPromote() {
     promBox.setFillColor(sf::Color(255, 215, 158));
     promBox.setOutlineColor(sf::Color(191, 69, 63));
     promBox.setOutlineThickness(4);
-    promTxt[0].loadFromFile("Image/wQ.png");
-    prom[0].setTexture(promTxt[0]);
-    promTxt[1].loadFromFile("Image/wR.png");
-    prom[1].setTexture(promTxt[1]);
-    promTxt[2].loadFromFile("Image/wN.png");
-    prom[2].setTexture(promTxt[2]);
-    promTxt[3].loadFromFile("Image/wB.png");
-    prom[3].setTexture(promTxt[3]);
+        promTxt[0].loadFromFile("Image/wQ.png");
+        prom[0].setTexture(promTxt[0]);
+        promTxt[1].loadFromFile("Image/wR.png");
+        prom[1].setTexture(promTxt[1]);
+        promTxt[2].loadFromFile("Image/wN.png");
+        prom[2].setTexture(promTxt[2]);
+        promTxt[3].loadFromFile("Image/wB.png");
+        prom[3].setTexture(promTxt[3]);
     for (int i = 0; i < 4; i++) {
         prom[i].setPosition(730 + 70.0 * i, 100);
     }
@@ -99,6 +99,7 @@ Game::Game() {
     initText();
     initPromote();
 }
+
 
 Game::~Game() {
     delete window;
@@ -142,15 +143,19 @@ void Game::ingameEvents() {
         draw_idx = 4;
     }
     if (prom[0].getGlobalBounds().contains(mousePosView)) {
+        board.namePromote = 'q';
         renderProm = false;
     }
     if (prom[1].getGlobalBounds().contains(mousePosView)) {
+        board.namePromote = 'r';
         renderProm = false;
     }
     if (prom[2].getGlobalBounds().contains(mousePosView)) {
+        board.namePromote = 'n';
         renderProm = false;
     }
     if (prom[3].getGlobalBounds().contains(mousePosView)) {
+        board.namePromote = 'b';
         renderProm = false;
     }
 }
@@ -246,6 +251,15 @@ void Game::updateMousePos() {
     mousePosView = window->mapPixelToCoords(mousePos);
 }
 
+void Game::updatePromote() {
+    if (board.isPromote)
+    {
+        renderProm = true;
+        board.isPromote = false;
+    }
+    
+}
+
 void Game::clickPieces() {
     if (draw_idx != 2) {
         return;
@@ -274,6 +288,7 @@ void Game::update() {
         checkmatePieces();
         updateText();
         updateMousePos();
+        updatePromote();
     }
 }
 
