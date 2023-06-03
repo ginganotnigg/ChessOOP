@@ -35,6 +35,7 @@ private:
 	bool resign;
 	bool timeout;
 	int isWhite;
+	bool stopEndgame;
 	sf::RectangleShape promBox;
 	sf::Texture promTxt[4];
 	sf::Sprite prom[4];
@@ -50,7 +51,7 @@ private:
 	GUIText ingameText[4];
 	GUIText replayText[3];
 	GUIText endgameText[5];
-	GUIText tutorialText;
+	GUIText tutorialText[2];
 
 	// Variables
 	int draw_idx;
@@ -87,6 +88,7 @@ public:
 	void ingameEvents();
 	void replayEvents();
 	void endgameEvents();
+	void tutoEvents();
 	void pollEvents();
 	void updateWhiteTime();
 	void updateBlackTime();
@@ -104,5 +106,6 @@ public:
 	void renderReplay();
 	void renderEndgame();
 	void renderPromote();
+	void renderTutorial();
 	void render();
 };

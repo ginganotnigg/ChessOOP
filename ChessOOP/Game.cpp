@@ -38,12 +38,12 @@ void Game::initFont() {
 }
 
 void Game::initText() {
-    menuText[0].initText(font1, 60, "NOOBCHESS", sf::Vector2f(430, 60), 1, sf::Color(255, 215, 158));
+    menuText[0].initText(font, 80, "NOOBCHESS", sf::Vector2f(390, 80), 1, sf::Color(255, 215, 158));
     menuText[0].text.setOutlineColor(sf::Color(209, 139, 71));
     menuText[0].text.setOutlineThickness(2.5);
-    menuText[1].initText(font1, 45, "PvP", sf::Vector2f(360, 330), 2);
-    menuText[2].initText(font1, 45, "How to Play", sf::Vector2f(360, 400), 2);
-    menuText[3].initText(font1, 45, "Exit", sf::Vector2f(360, 540), 2);
+    menuText[1].initText(font1, 35, "PVP", sf::Vector2f(360, 330), 2);
+    menuText[2].initText(font1, 35, "HOW TO PLAY", sf::Vector2f(360, 400), 2);
+    menuText[3].initText(font1, 35, "EXIT", sf::Vector2f(360, 540), 2);
     ingameText[0].initText(font, 40, "Undo", sf::Vector2f(835, 220), 2);
     ingameText[1].initText(font, 40, "Resign", sf::Vector2f(820, 340), 2);
     ingameText[2].initText(font, 40, "10:00", sf::Vector2f(322, -10), 1, sf::Color(150, 150, 150));
@@ -57,8 +57,9 @@ void Game::initText() {
     endgameText[3].initText(font, 45, "White win", sf::Vector2f(795, 240), 1, sf::Color(70, 90, 70));
     endgameText[4].initText(font, 30, "By resignation!", sf::Vector2f(785, 300), 1, sf::Color(70, 90, 70));
 
-    string tuto = "The rules are the same as regular chess, except for those changes:\n Each player has 10 minutes with no ince";
-    menuText[1].initText(font1, 45, "PvP", sf::Vector2f(360, 330), 2);
+    string tuto = "The rules are the same as regular chess, except for those changes:\n\n\t- Each player has 10 minutes with no increments.\n\t- Since both players are noobs, they would be able to undo a move they dislike.\n However, the cost for one undo is 1/3 of total time (200 secs).\n\t- Player whose time reaches zero first loses.";
+    tutorialText[0].initText(font1, 20, tuto, sf::Vector2f(50, 300), 1, sf::Color(255, 215, 158));
+    tutorialText[1].initText(font1, 30, "Return", sf::Vector2f(470, 600), 2);
 }
 
 void Game::initBgr() {
@@ -80,6 +81,7 @@ void Game::initBoard() {
     timeout = false;
     whiteTime = 600;
     blackTime = 600;
+    stopEndgame = false;
 }
 
 void Game::initPromote() {
@@ -123,7 +125,11 @@ bool Game::running() {
 }
 
 bool Game::getEndgame() {
-    return (resign || timeout || (board.allStates.size() > 1 && board.checkGameover() != '*'));
+    if ((resign || timeout || (board.allStates.size() > 2 && board.checkGameover() != '*')) && !stopEndgame) {
+        draw_idx = 4;
+        return true;
+    }
+    return false;
 }
 
 void Game::promoteHover() {
@@ -149,7 +155,6 @@ void Game::menuEvents() {
         sound[1].play();
         soundLoop = false;
         sound[0].stop();
-        initBoard();
         draw_idx = 5;
     }
     if (menuText[3].text.getGlobalBounds().contains(mousePosView)) {
@@ -162,8 +167,8 @@ void Game::ingameEvents() {
         sound[1].play();
         if (board.allStates.size() > 2) {
             if (isWhite && whiteTime > 200) {
-                //whiteTime -= 290;
-                whiteTime -= 200;
+                whiteTime -= 280;
+                //whiteTime -= 200;
                 board.undoMove();
                 board.undoMove();
             }
@@ -177,6 +182,7 @@ void Game::ingameEvents() {
     if (ingameText[1].text.getGlobalBounds().contains(mousePosView)) {
         sound[1].play();
         resign = true;
+        draw_idx = 4;
     }
     if (prom[0].getGlobalBounds().contains(mousePosView)) {
         board.namePromote = 'q';
@@ -224,18 +230,28 @@ void Game::replayEvents() {
 void Game::endgameEvents() {
     if (endgameText[0].text.getGlobalBounds().contains(mousePosView)) {
         sound[1].play();
-        initBoard();
+        stopEndgame = true;
         draw_idx = 2;
+        initBoard();
     }
     if (endgameText[1].text.getGlobalBounds().contains(mousePosView)) {
         sound[1].play();
+        stopEndgame = true;
         draw_idx = 3;
         board.loadState(0);
     }
     if (endgameText[2].text.getGlobalBounds().contains(mousePosView)) {
         sound[1].play();
+        stopEndgame = true;
         draw_idx = 1;
+    }
+}
+
+void Game::tutoEvents() {
+    if (tutorialText[1].text.getGlobalBounds().contains(mousePosView)) {
+        sound[1].play();
         soundLoop = true;
+        draw_idx = 1;
     }
 }
 
@@ -244,7 +260,7 @@ void Game::pollEvents() {
         if (sound[0].getStatus() == sf::SoundSource::Status::Stopped && soundLoop) sound[0].play();
         // Window events
         switch (ev.type) {
-            
+
         case this->ev.MouseMoved: {
             promoteHover();
             break;
@@ -272,6 +288,9 @@ void Game::pollEvents() {
                 // Endgame button
                 if (draw_idx == 4) {
                     endgameEvents();
+                }
+                if (draw_idx == 5) {
+                    tutoEvents();
                 }
             }
             break;
@@ -322,6 +341,7 @@ void Game::updateText() {
     for (int i = 0; i < 5; i++) {
         endgameText[i].update(ev, mousePosView);
     }
+    tutorialText[1].update(ev, mousePosView);
 }
 
 void Game::updateMousePos() {
@@ -350,7 +370,6 @@ void Game::updateBoard() {
 }
 
 void Game::updateEndgame() {
-    sound[6].play();
     if (resign) {
         string alert = (isWhite) ? "Black win" : "White win";
         endgameText[3].text.setString(alert);
@@ -403,7 +422,7 @@ void Game::updateEndgame() {
         endgameText[4].text.setPosition(sf::Vector2f(793, 300));
         break;
     }
-            
+
     case '*':
         break;
 
@@ -416,7 +435,6 @@ void Game::update() {
     updateText();
     updateBoard();
     if (getEndgame()) {
-        draw_idx = 4;
         updateEndgame();
     }
 }
@@ -441,9 +459,6 @@ void Game::renderIngame() {
     for (int i = 0; i < 4; i++) {
         ingameText[i].render(window);
     }
-    /*for (int i = 0; i < 2; i++) {
-        ingameText[i].render(window);
-    }*/
 }
 
 void Game::renderReplay() {
@@ -465,6 +480,12 @@ void Game::renderPromote() {
         for (int i = 0; i < 4; i++) {
             window->draw(prom[i]);
         }
+    }
+}
+
+void Game::renderTutorial(){
+    for (int i = 0; i < 2; i++) {
+        tutorialText[i].render(window);
     }
 }
 
@@ -493,6 +514,11 @@ void Game::render() {
     case 4: {
         renderBoard();
         renderEndgame();
+        break;
+    }
+
+    case 5: {
+        renderTutorial();
         break;
     }
 

@@ -7,18 +7,41 @@ void Board::setPiece(char col, int row, Piece* piece) {
 }
 
 void Board::initBoard() {
-	//initState = "RNBQKBNRPPPPPPPP********************************pppppppprnbqkbnr";
-	//initStatus = "uuuuuuuuuuuuuuuu********************************uuuuuuuuuuuuuuuu";
+	allStates.clear();
+	allStatus.clear();
+	// Rook
+	/*initState = "*************K************p**R**************************k*******";
+	initStatus = "*************m************m**m**************************m*******";*/
+	// Bishop
+	//initState = "*************K******B*****************r*************k***********";
+	//initStatus = "*************m******m*****************m*************m***********";
+	// Queen
+	//initState = "******K********************Q***************p*************k******";
+	//initStatus = "******m********************m***************m*************m******";
+	// Knight
+	//initState = "******************b***K*****N*******************************k***";
+	//initStatus = "******************m***m*****m*******************************m***";
+	// King
+	//initState = "********************Kp*****n***********************k************";
+	//initStatus = "********************mm*****m***********************m************";
+	/*initState = "RNBQK**R****************************************pppppqppr***kbnr";
+	initStatus = "uuuuu**uuuuuuuuu********************************uuuuuuuuu***uuuu";*/
+	// Pawn
+	//initState = "*********K**P*p*********************P*****p*******pp******k*****";
+	//initStatus = "*********m**u*m*********************m*****m*******uu******m*****";
+	// Custom board
+	initState = "RNBQKBNRPPPPPPPP********************************pppppppprnbqkbnr";
+	initStatus = "uuuuuuuuuuuuuuuu********************************uuuuuuuuuuuuuuuu";
 	// Stalemate
 	//initState = "********************************************KQ****************k*";
 	//initStatus = "********************************************mm****************m*";
 	// Insufficience
-	initState = "***************************************n***pKB*********k********";
-	initStatus = "***************************************m***mmm*********m********";
+	/*initState = "***************************************n***pKB*********k********";
+	initStatus = "***************************************m***mmm*********m********";*/
 	// 50-move rule
-	//initState = "*******************PK******P*PN****pPp******p********kb*********";
-	//initStatus = "*******************mm******m*mm****mmm******m********mm*********";
-	//moves_since_capture = 47;
+	/*initState = "*******************PK******P*PN****pPp******p********kb*********";
+	initStatus = "*******************mm******m*mm****mmm******m********mm*********";
+	moves_since_capture = 47;*/
 	// Checkmate
 	//initState = "**********n********R*********************K***************k******";
 	//initStatus = "**********m********m*********************m***************m******";
@@ -28,10 +51,12 @@ void Board::initBoard() {
 	// Castle
 	//initState = "RNBQK**RPPPPPPPP********************************ppppppppr***kbnr";
 	//initStatus = "uuuuu**uuuuuuuuu********************************uuuuuuuuu***uuuu";
+
+
 	moves_since_capture = 0;
 	namePromote = ' ';
 	isPromote = false;
-
+	squares.clear();
 	for (int row = 1; row <= 8; row++) {
 		for (char col = 'a'; col <= 'h'; col++) {
 			squares.push_back(new Square(col, row));
@@ -50,8 +75,9 @@ Board::Board() {
 }
 
 Board::~Board() {
-	for (int i = 0; i < squares.size(); i++) {
-		delete squares[i];
+	for (auto i : squares) {
+		delete i;
+		i = nullptr;
 	}
 }
 
@@ -268,15 +294,52 @@ void Board::loadLastState()
 void Board::loadState(const int& idx)
 {
 	// Delete current board
+	if (getOwnKing(true)->area.getFillColor().a != 0 || getOwnKing(false)->area.getFillColor().a != 0) {
+		getOwnKing(true)->area.setFillColor(sf::Color(0, 0, 0, 0));
+		getOwnKing(false)->area.setFillColor(sf::Color(0, 0, 0, 0));
+	}
 	for (auto i : pieces) {
 		delete i;
 		i = nullptr;
 	}
 	pieces.clear();
 	// Load board recently
-	string lastState = allStates[idx];
-	string lastStatus = allStates[idx];
-	createPieces(lastState, lastStatus);
+	string state = allStates[idx];
+	for (int j = 0; j < state.size(); j++)
+	{
+		char temp = state[j];
+		Piece* p = nullptr;
+		switch (temp)
+		{
+		case 'R': case 'r':
+			p = new Rook(temp);
+			squares[j]->piece = p;
+			break;
+		case 'N': case 'n':
+			p = new Knight(temp);
+			squares[j]->piece = p;
+			break;
+		case 'B': case 'b':
+			p = new Bishop(temp);
+			squares[j]->piece = p;
+			break;
+		case 'Q': case 'q':
+			p = new Queen(temp);
+			squares[j]->piece = p;
+			break;
+		case 'K': case 'k':
+			p = new King(temp);
+			squares[j]->piece = p;
+			break;
+		case 'P': case 'p':
+			p = new Pawn(temp);
+			squares[j]->piece = p;
+			break;
+		case '*':
+			squares[j]->piece = nullptr;
+			break;
+		}
+	}
 }
 
 void Board::undoMove()
