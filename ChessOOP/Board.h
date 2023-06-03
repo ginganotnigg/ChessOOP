@@ -46,6 +46,8 @@ public:
 	bool kingInCheck(Square*& king);
 	void checkAlert();
 	void moveOrCapture(Square*& from, Square*& to);
+
+
 	void promotePawn(Square*& to);
 	void movePiece(string& move);
 	void undoMove();
@@ -55,9 +57,6 @@ public:
 	// Update and render
 	void targetEvents(sf::Event& e, sf::Vector2f& mouse);
 	void moveEvents(sf::Event& e, sf::Vector2f& mouse);
-	void promoteEvents(sf::Event& e, sf::Vector2f& mouse);
 	void update(sf::Event& e, sf::Vector2f& mouse);
-
-	void renderPromote(sf::RenderWindow*& window);
 	void render(sf::RenderWindow*& window);
 };
