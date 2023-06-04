@@ -167,8 +167,8 @@ void Game::ingameEvents() {
         sound[1].play();
         if (board.allStates.size() > 2) {
             if (isWhite && whiteTime > 200) {
-                whiteTime -= 280;
-                //whiteTime -= 200;
+                //whiteTime -= 280;
+                whiteTime -= 200;
                 board.undoMove();
                 board.undoMove();
             }
